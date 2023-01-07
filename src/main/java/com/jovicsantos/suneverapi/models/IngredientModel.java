@@ -28,7 +28,7 @@ public class IngredientModel implements Serializable {
   private UUID id;
   @Column(nullable = false)
   private String name;
-  @Column(nullable = false, precision = 5, scale = 2)
+  @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal price;
 
   @ManyToOne

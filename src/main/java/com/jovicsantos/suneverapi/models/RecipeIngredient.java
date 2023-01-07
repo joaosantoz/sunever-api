@@ -1,6 +1,7 @@
 package com.jovicsantos.suneverapi.models;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.EmbeddedId;
@@ -28,6 +29,6 @@ public class RecipeIngredient implements Serializable {
   @JoinColumn(name = "ingredient_id")
   private IngredientModel ingredient;
 
-  @Column(nullable = false)
-  private float quantity;
+  @Column(nullable = false, precision = 10, scale = 2)
+  private BigDecimal quantity;
 }
