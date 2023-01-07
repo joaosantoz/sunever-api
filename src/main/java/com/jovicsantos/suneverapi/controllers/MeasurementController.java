@@ -24,10 +24,10 @@ public class MeasurementController {
 
   @PostMapping
   public ResponseEntity<Object> saveMeasurement(@RequestBody @Valid MeasurementDto measurementDto) {
-    if (measurementService.existsByName(measurementDto.getName())) {
+    if (measurementService.existsByName(measurementDto.name())) {
       return ResponseEntity.status(HttpStatus.CONFLICT)
           .body(String.format("Conflict: This measurement already exists.",
-              measurementDto.getName()));
+              measurementDto.name()));
     }
 
     MeasurementModel measurementModel = new MeasurementModel();
