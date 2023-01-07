@@ -1,5 +1,7 @@
 package com.jovicsantos.suneverapi.dtos;
 
+import org.hibernate.validator.constraints.Length;
+
 import jakarta.validation.constraints.NotBlank;
 import lombok.Data;
 
@@ -9,5 +11,6 @@ public class MeasurementDto {
   @NotBlank
   private String name;
   @NotBlank
-  private String description;
+  @Length(max = 10)
+  private String abbreviation;
 }
