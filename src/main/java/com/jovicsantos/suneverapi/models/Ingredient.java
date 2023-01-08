@@ -30,6 +30,8 @@ public class Ingredient implements Serializable {
   private String name;
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal price;
+  @Column(nullable = false, precision = 10, scale = 2)
+  private BigDecimal quantity_per_measure;
 
   @ManyToOne
   @JoinColumn(name = "measurement_id")
