@@ -1,11 +1,16 @@
 package com.jovicsantos.suneverapi.controllers;
 
+import java.util.UUID;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -50,5 +55,53 @@ public class IngredientController {
   @GetMapping
   public ResponseEntity<Object> getAllIngredients() {
     return ResponseEntity.status(HttpStatus.OK).body(ingredientService.findAll());
+  }
+
+  @GetMapping("/{id}")
+  public ResponseEntity<Object> getIngredientById(@PathVariable(name = "id") UUID id) {
+    var optionalIngredient = ingredientService.findById(id);
+
+    if (!optionalIngredient.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
+    }
+
+    return ResponseEntity.status(HttpStatus.OK).body(optionalIngredient.get());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Object> deleteIngredientById(@PathVariable(name = "id") UUID id) {
+    var optionalIngredient = ingredientService.findById(id);
+
+    if (!optionalIngredient.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
+    }
+
+    ingredientService.deleteById(id);
+
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Ingredient deleted successfully.");
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Object> updateIngredientById(@PathVariable(name = "id") UUID id,
+      @RequestBody @Valid IngredientDto ingredientDto) {
+
+    var optionalIngredient = ingredientService.findById(id);
+    if (!optionalIngredient.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
+    }
+
+    var optionalMeasurement = measurementService.findById(ingredientDto.measurement_id());
+    if (!optionalMeasurement.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
+    }
+
+    var ingredientModel = new Ingredient();
+    BeanUtils.copyProperties(ingredientDto, ingredientModel);
+    ingredientModel.setId(id);
+    ingredientModel.setMeasurement(optionalMeasurement.get());
+    ingredientModel.setRecipe(optionalIngredient.get().getRecipe());
+    ingredientModel.setRecipes(optionalIngredient.get().getRecipes());
+
+    return ResponseEntity.status(HttpStatus.OK).body(ingredientService.save(ingredientModel));
   }
 }

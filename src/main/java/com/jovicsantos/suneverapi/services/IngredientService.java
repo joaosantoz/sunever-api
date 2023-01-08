@@ -1,5 +1,8 @@
 package com.jovicsantos.suneverapi.services;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +24,13 @@ public class IngredientService {
 
   public Iterable<Ingredient> findAll() {
     return ingredientRepository.findAll();
+  }
+
+  public Optional<Ingredient> findById(UUID id) {
+    return ingredientRepository.findById(id);
+  }
+
+  public void deleteById(UUID id) {
+    ingredientRepository.deleteById(id);
   }
 }
