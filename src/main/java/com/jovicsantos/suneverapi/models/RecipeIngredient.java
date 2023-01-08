@@ -30,5 +30,5 @@ public class RecipeIngredient implements Serializable {
   private Ingredient ingredient;
 
   @Column(nullable = false, precision = 10, scale = 2)
-  private BigDecimal quantity;
+  private BigDecimal quantity_per_recipe;
 }
