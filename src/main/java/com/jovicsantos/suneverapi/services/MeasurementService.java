@@ -29,4 +29,8 @@ public class MeasurementService {
   public Optional<Measurement> findById(UUID id) {
     return measurementRepository.findById(id);
   }
+
+  public void deleteById(UUID id) {
+    measurementRepository.deleteById(id);
+  }
 }

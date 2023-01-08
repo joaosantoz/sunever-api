@@ -6,6 +6,7 @@ import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -29,8 +30,7 @@ public class MeasurementController {
   public ResponseEntity<Object> saveMeasurement(@RequestBody @Valid MeasurementDto measurementDto) {
     if (measurementService.existsByName(measurementDto.name())) {
       return ResponseEntity.status(HttpStatus.CONFLICT)
-          .body(String.format("Conflict: This measurement already exists.",
-              measurementDto.name()));
+          .body("Conflict: This measurement already exists.");
     }
 
     var measurementModel = new Measurement();
@@ -41,7 +41,7 @@ public class MeasurementController {
 
   @GetMapping
   public ResponseEntity<Iterable<Measurement>> getAllMeasurements() {
-    return ResponseEntity.ok(measurementService.findAll());
+    return ResponseEntity.status(HttpStatus.OK).body(measurementService.findAll());
   }
 
   @GetMapping("/{id}")
@@ -52,6 +52,19 @@ public class MeasurementController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
     }
 
-    return ResponseEntity.ok(optionalMeasurement.get());
+    return ResponseEntity.status(HttpStatus.OK).body(optionalMeasurement.get());
+  }
+
+  @DeleteMapping("/{id}")
+  public ResponseEntity<Object> deleteMeasurementById(@PathVariable(name = "id") UUID id) {
+    var optionalMeasurement = measurementService.findById(id);
+
+    if (!optionalMeasurement.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
+    }
+
+    measurementService.deleteById(id);
+
+    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Measurement deleted successfully.");
   }
 }
