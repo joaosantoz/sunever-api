@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -66,5 +67,21 @@ public class MeasurementController {
     measurementService.deleteById(id);
 
     return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Measurement deleted successfully.");
+  }
+
+  @PutMapping("/{id}")
+  public ResponseEntity<Object> updateMeasurementById(@PathVariable(name = "id") UUID id,
+      @RequestBody @Valid MeasurementDto measurementDto) {
+    var optionalMeasurement = measurementService.findById(id);
+
+    if (!optionalMeasurement.isPresent()) {
+      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
+    }
+
+    var measurementModel = new Measurement();
+    BeanUtils.copyProperties(measurementDto, measurementModel);
+    measurementModel.setId(optionalMeasurement.get().getId());
+
+    return ResponseEntity.status(HttpStatus.OK).body(measurementService.save(measurementModel));
   }
 }
