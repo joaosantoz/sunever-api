@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -38,8 +40,10 @@ public class Ingredient implements Serializable {
   private Measurement measurement;
 
   @ManyToMany(mappedBy = "ingredients")
+  @JsonIgnore
   private Set<Recipe> recipes;
 
   @OneToMany(mappedBy = "ingredient")
+  @JsonIgnore
   private Set<RecipeIngredient> recipe;
 }
