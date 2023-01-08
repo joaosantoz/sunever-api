@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jovicsantos.suneverapi.dtos.MeasurementDto;
-import com.jovicsantos.suneverapi.models.MeasurementModel;
+import com.jovicsantos.suneverapi.models.Measurement;
 import com.jovicsantos.suneverapi.services.MeasurementService;
 
 import jakarta.validation.Valid;
@@ -30,14 +30,14 @@ public class MeasurementController {
               measurementDto.name()));
     }
 
-    MeasurementModel measurementModel = new MeasurementModel();
+    Measurement measurementModel = new Measurement();
     BeanUtils.copyProperties(measurementDto, measurementModel);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(measurementService.save(measurementModel));
   }
 
   @GetMapping
-  public ResponseEntity<Iterable<MeasurementModel>> getAllMeasurements() {
+  public ResponseEntity<Iterable<Measurement>> getAllMeasurements() {
     return ResponseEntity.ok(measurementService.findAll());
   }
 }

@@ -1,7 +1,6 @@
 package com.jovicsantos.suneverapi.models;
 
 import java.io.Serializable;
-import java.math.BigDecimal;
 import java.util.Set;
 import java.util.UUID;
 
@@ -11,33 +10,30 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinTable;
 import jakarta.persistence.ManyToMany;
-import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "ingredient")
-public class IngredientModel implements Serializable {
+@Table(name = "recipe")
+public class Recipe implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   private UUID id;
-  @Column(nullable = false)
+  @Column(nullable = false, unique = true)
   private String name;
-  @Column(nullable = false, precision = 10, scale = 2)
-  private BigDecimal price;
+  @Column(nullable = false)
+  private String description;
 
-  @ManyToOne
-  @JoinColumn(name = "measurement_id")
-  private MeasurementModel measurement;
+  @ManyToMany
+  @JoinTable(name = "recipe_ingredient", joinColumns = @JoinColumn(name = "recipe_id"), inverseJoinColumns = @JoinColumn(name = "ingredient_id"))
+  private Set<Ingredient> ingredients;
 
-  @ManyToMany(mappedBy = "ingredients")
-  private Set<RecipeModel> recipes;
-
-  @OneToMany(mappedBy = "ingredient")
-  private Set<RecipeIngredient> recipe;
+  @OneToMany(mappedBy = "recipe")
+  private Set<RecipeIngredient> ingredient;
 }

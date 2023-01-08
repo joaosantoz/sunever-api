@@ -22,12 +22,12 @@ public class RecipeIngredient implements Serializable {
   @ManyToOne
   @MapsId("recipe_id")
   @JoinColumn(name = "recipe_id")
-  private RecipeModel recipe;
+  private Recipe recipe;
 
   @ManyToOne
   @MapsId("ingredient_id")
   @JoinColumn(name = "ingredient_id")
-  private IngredientModel ingredient;
+  private Ingredient ingredient;
 
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal quantity;

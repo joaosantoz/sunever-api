@@ -14,7 +14,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "measurement")
-public class MeasurementModel implements Serializable {
+public class Measurement implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
