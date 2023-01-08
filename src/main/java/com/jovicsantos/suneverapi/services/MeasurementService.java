@@ -1,5 +1,8 @@
 package com.jovicsantos.suneverapi.services;
 
+import java.util.Optional;
+import java.util.UUID;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,5 +24,9 @@ public class MeasurementService {
 
   public boolean existsByName(String name) {
     return measurementRepository.existsByName(name);
+  }
+
+  public Optional<Measurement> findById(UUID id) {
+    return measurementRepository.findById(id);
   }
 }
