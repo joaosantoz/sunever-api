@@ -1,4 +1,6 @@
 package com.jovicsantos.suneverapi.dtos;
 
-public record RecipeDto(String name, String description, RecipeIngredientDto RecipeIngredientDto) {
+import java.util.List;
+
+public record RecipeDto(String name, String description, List<RecipeIngredientDto> ingredients) {
 }

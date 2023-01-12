@@ -26,6 +26,10 @@ public class IngredientService {
     return ingredientRepository.findAll();
   }
 
+  public Iterable<Ingredient> findAllById(Iterable<UUID> ids) {
+    return ingredientRepository.findAllById(ids);
+  }
+
   public Optional<Ingredient> findById(UUID id) {
     return ingredientRepository.findById(id);
   }
