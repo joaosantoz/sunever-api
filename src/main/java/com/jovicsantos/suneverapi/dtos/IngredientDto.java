@@ -9,6 +9,6 @@ import jakarta.validation.constraints.NotNull;
 public record IngredientDto(
 		@NotBlank String name,
 		@NotNull BigDecimal price,
-		@NotNull BigDecimal quantity_per_measure,
-		@NotNull UUID measurement_id) {
+		@NotNull BigDecimal quantityPerMeasure,
+		@NotNull UUID measurementId) {
 }

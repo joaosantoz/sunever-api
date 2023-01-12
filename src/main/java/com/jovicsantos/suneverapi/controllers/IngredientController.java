@@ -41,7 +41,7 @@ public class IngredientController {
     var ingredientModel = new Ingredient();
     BeanUtils.copyProperties(ingredientDto, ingredientModel);
 
-    var optionalMeasurement = measurementService.findById(ingredientDto.measurement_id());
+    var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
 
     if (!optionalMeasurement.isPresent()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
@@ -90,7 +90,7 @@ public class IngredientController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
     }
 
-    var optionalMeasurement = measurementService.findById(ingredientDto.measurement_id());
+    var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
     if (!optionalMeasurement.isPresent()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
     }
@@ -99,7 +99,6 @@ public class IngredientController {
     BeanUtils.copyProperties(ingredientDto, ingredientModel);
     ingredientModel.setId(id);
     ingredientModel.setMeasurement(optionalMeasurement.get());
-    ingredientModel.setRecipe(optionalIngredient.get().getRecipe());
     ingredientModel.setRecipes(optionalIngredient.get().getRecipes());
 
     return ResponseEntity.status(HttpStatus.OK).body(ingredientService.save(ingredientModel));

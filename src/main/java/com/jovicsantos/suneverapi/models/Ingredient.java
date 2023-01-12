@@ -2,7 +2,7 @@ package com.jovicsantos.suneverapi.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -13,7 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToMany;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -33,17 +32,13 @@ public class Ingredient implements Serializable {
   @Column(nullable = false, precision = 10, scale = 2)
   private BigDecimal price;
   @Column(nullable = false, precision = 10, scale = 2)
-  private BigDecimal quantity_per_measure;
+  private BigDecimal quantityPerMeasure;
 
   @ManyToOne
   @JoinColumn(name = "measurement_id")
   private Measurement measurement;
 
-  @ManyToMany(mappedBy = "ingredients")
-  @JsonIgnore
-  private Set<Recipe> recipes;
-
   @OneToMany(mappedBy = "ingredient")
   @JsonIgnore
-  private Set<RecipeIngredient> recipe;
+  private List<RecipeIngredient> recipes;
 }
