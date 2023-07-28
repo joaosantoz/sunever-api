@@ -2,39 +2,39 @@ package com.jovicsantos.suneverapi.models;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.util.UUID;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
-import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.MapsId;
 import jakarta.persistence.Table;
 import lombok.Data;
 
 @Entity
 @Data
-@Table(name = "recipe_ingredient")
+@Table(name = "RecipeIngredient")
 public class RecipeIngredient implements Serializable {
   private static final long serialVersionUID = 1L;
 
-  @EmbeddedId
-  @JsonIgnore
-  private RecipeIngredientPK id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.AUTO)
+  private UUID id;
 
-  @ManyToOne
-  @MapsId("recipe_id")
-  @JoinColumn(name = "recipe_id")
   @JsonIgnore
+  @ManyToOne(cascade = CascadeType.ALL)
+  @JoinColumn(name = "recipeId")
   private Recipe recipe;
 
-  @ManyToOne
-  @MapsId("ingredient_id")
-  @JoinColumn(name = "ingredient_id")
-  private Ingredient ingredient;
+  @Column(nullable = false)
+  private UUID ingredientId;
 
-  @Column(nullable = false, precision = 10, scale = 2)
-  private BigDecimal quantity;
+  @Column(nullable = false)
+  private BigDecimal ingredientQuantity;
 }

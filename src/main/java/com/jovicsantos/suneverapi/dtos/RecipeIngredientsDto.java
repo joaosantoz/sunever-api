@@ -5,5 +5,5 @@ import java.util.UUID;
 
 import jakarta.validation.constraints.NotNull;
 
-public record RecipeIngredientDto(@NotNull UUID id, @NotNull BigDecimal quantity) {
+public record RecipeIngredientsDto(@NotNull UUID id, @NotNull BigDecimal quantity) {
 }

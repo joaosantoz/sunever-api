@@ -2,6 +2,7 @@ package com.jovicsantos.suneverapi.controllers;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jovicsantos.suneverapi.dtos.RecipeDto;
+import com.jovicsantos.suneverapi.dtos.RecipeIngredientsDto;
+import com.jovicsantos.suneverapi.models.Ingredient;
 import com.jovicsantos.suneverapi.models.Recipe;
 import com.jovicsantos.suneverapi.models.RecipeIngredient;
 import com.jovicsantos.suneverapi.services.IngredientService;
@@ -24,31 +27,41 @@ import jakarta.validation.Valid;
 @RequestMapping("/recipes")
 public class RecipeController {
   @Autowired
-  private RecipeService recipeService;
+  RecipeService recipeService;
+
   @Autowired
-  private IngredientService ingredientService;
+  IngredientService ingredientService;
 
   @PostMapping
-  public Object saveRecipe(@RequestBody @Valid RecipeDto recipeDto) {
-    Recipe recipeModel = new Recipe();
+  public ResponseEntity<Object> saveRecipe(@RequestBody @Valid RecipeDto recipeDto) {
+    if (recipeService.existsByName(recipeDto.name())) {
+      return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This recipe already exists.");
+    }
+
+    var recipeModel = new Recipe();
     BeanUtils.copyProperties(recipeDto, recipeModel);
 
-    List<RecipeIngredient> ingredients = new ArrayList<>();
+    List<RecipeIngredientsDto> recipeIngredientsList = recipeDto.ingredients();
 
-    recipeDto.ingredients().forEach(ingredientDtoItem -> {
-      RecipeIngredient recipeIngredientModel = new RecipeIngredient();
+    ArrayList<RecipeIngredient> ingredientList = new ArrayList<>();
 
-      var ingredient = ingredientService.findById(ingredientDtoItem.id()).get();
-      var quantity = ingredientDtoItem.quantity();
+    for (RecipeIngredientsDto ingredient : recipeIngredientsList) {
+      Optional<Ingredient> ingredientOptional = ingredientService.findById(ingredient.id());
 
-      recipeIngredientModel.setIngredient(ingredient);
-      recipeIngredientModel.setQuantity(quantity);
+      if (!ingredientOptional.isPresent()) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient " + ingredient.id() + " not found.");
+      }
 
-      ingredients.add(recipeIngredientModel);
-    });
+      var recipeIngredientModel = new RecipeIngredient();
 
-    recipeModel.setIngredients(ingredients);
+      recipeIngredientModel.setIngredientId(ingredient.id());
+      recipeIngredientModel.setIngredientQuantity(ingredient.quantity());
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.save(recipeModel));
+      ingredientList.add(recipeIngredientModel);
+    }
+
+    recipeModel.setIngredientList(ingredientList);
+
+    return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.save(recipeModel, ingredientList));
   }
 }
