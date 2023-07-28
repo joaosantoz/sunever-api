@@ -84,7 +84,6 @@ public class IngredientController {
   @PutMapping("/{id}")
   public ResponseEntity<Object> updateIngredientById(@PathVariable(name = "id") UUID id,
       @RequestBody @Valid IngredientDto ingredientDto) {
-
     var optionalIngredient = ingredientService.findById(id);
     if (!optionalIngredient.isPresent()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
@@ -99,7 +98,6 @@ public class IngredientController {
     BeanUtils.copyProperties(ingredientDto, ingredientModel);
     ingredientModel.setId(id);
     ingredientModel.setMeasurement(optionalMeasurement.get());
-    ingredientModel.setRecipes(optionalIngredient.get().getRecipes());
 
     return ResponseEntity.status(HttpStatus.OK).body(ingredientService.save(ingredientModel));
   }
