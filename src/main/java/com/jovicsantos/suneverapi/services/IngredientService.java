@@ -18,8 +18,8 @@ public class IngredientService {
     return ingredientRepository.existsByName(name);
   }
 
-  public Ingredient save(Ingredient ingredientModel) {
-    return ingredientRepository.save(ingredientModel);
+  public Ingredient save(Ingredient ingredient) {
+    return ingredientRepository.save(ingredient);
   }
 
   public Iterable<Ingredient> findAll() {
