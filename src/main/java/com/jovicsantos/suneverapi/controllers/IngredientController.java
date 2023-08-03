@@ -43,7 +43,7 @@ public class IngredientController {
 
     var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
 
-    if (!optionalMeasurement.isPresent()) {
+    if (optionalMeasurement.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
     }
 
@@ -58,10 +58,10 @@ public class IngredientController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Object> getIngredientById(@PathVariable(name = "id") UUID id) {
+  public ResponseEntity<Object> getIngredientById(@PathVariable UUID id) {
     var optionalIngredient = ingredientService.findById(id);
 
-    if (!optionalIngredient.isPresent()) {
+    if (optionalIngredient.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
     }
 
@@ -69,10 +69,10 @@ public class IngredientController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteIngredientById(@PathVariable(name = "id") UUID id) {
+  public ResponseEntity<Object> deleteIngredientById(@PathVariable UUID id) {
     var optionalIngredient = ingredientService.findById(id);
 
-    if (!optionalIngredient.isPresent()) {
+    if (optionalIngredient.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
     }
 
@@ -82,15 +82,15 @@ public class IngredientController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> updateIngredientById(@PathVariable(name = "id") UUID id,
+  public ResponseEntity<Object> updateIngredientById(@PathVariable UUID id,
       @RequestBody @Valid IngredientDto ingredientDto) {
     var optionalIngredient = ingredientService.findById(id);
-    if (!optionalIngredient.isPresent()) {
+    if (optionalIngredient.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
     }
 
     var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
-    if (!optionalMeasurement.isPresent()) {
+    if (optionalMeasurement.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
     }
 

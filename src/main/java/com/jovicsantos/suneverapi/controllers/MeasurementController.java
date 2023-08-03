@@ -46,10 +46,10 @@ public class MeasurementController {
   }
 
   @GetMapping("/{id}")
-  public ResponseEntity<Object> getMeasurementById(@PathVariable(name = "id") UUID id) {
+  public ResponseEntity<Object> getMeasurementById(@PathVariable UUID id) {
     var optionalMeasurement = measurementService.findById(id);
 
-    if (!optionalMeasurement.isPresent()) {
+    if (optionalMeasurement.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
     }
 
@@ -57,10 +57,10 @@ public class MeasurementController {
   }
 
   @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteMeasurementById(@PathVariable(name = "id") UUID id) {
+  public ResponseEntity<Object> deleteMeasurementById(@PathVariable UUID id) {
     var optionalMeasurement = measurementService.findById(id);
 
-    if (!optionalMeasurement.isPresent()) {
+    if (optionalMeasurement.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
     }
 
@@ -70,11 +70,11 @@ public class MeasurementController {
   }
 
   @PutMapping("/{id}")
-  public ResponseEntity<Object> updateMeasurementById(@PathVariable(name = "id") UUID id,
+  public ResponseEntity<Object> updateMeasurementById(@PathVariable UUID id,
       @RequestBody @Valid MeasurementDto measurementDto) {
     var optionalMeasurement = measurementService.findById(id);
 
-    if (!optionalMeasurement.isPresent()) {
+    if (optionalMeasurement.isEmpty()) {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
     }
 

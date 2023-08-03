@@ -48,7 +48,7 @@ public class RecipeController {
     for (RecipeIngredientsDto ingredient : recipeIngredientsList) {
       Optional<Ingredient> ingredientOptional = ingredientService.findById(ingredient.id());
 
-      if (!ingredientOptional.isPresent()) {
+      if (ingredientOptional.isEmpty()) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient " + ingredient.id() + " not found.");
       }
 
