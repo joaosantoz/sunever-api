@@ -13,6 +13,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
 import lombok.Data;
 
 @Entity
@@ -31,5 +32,8 @@ public class Recipe implements Serializable {
   private String description;
   @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
   private List<RecipeIngredient> ingredientList;
+  @Transient
   private BigDecimal recipeProductionCost;
+  @Transient
+  private BigDecimal recipeSellingPrice;
 }

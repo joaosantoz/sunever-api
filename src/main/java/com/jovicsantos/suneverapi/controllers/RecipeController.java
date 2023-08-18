@@ -1,7 +1,10 @@
 package com.jovicsantos.suneverapi.controllers;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -71,10 +74,16 @@ public class RecipeController {
   }
 
   @GetMapping("/calculate/{id}")
-  public ResponseEntity<Recipe> calculate(@PathVariable UUID id,
-      @RequestParam(required = true) Double profitPercentage) throws Exception {
-    Recipe recipeWithValuesCalculated = recipeService.calculateRecipeCost(id);
+  public ResponseEntity<Map<String, BigDecimal>> calculate(@PathVariable UUID id,
+      @RequestParam(required = true) BigDecimal profitPercentage) throws Exception {
+    recipeService.calculateRecipeCost(id);
 
-    return ResponseEntity.status(HttpStatus.OK).body(recipeWithValuesCalculated);
+    Map<String, BigDecimal> recipeSellingPriceMap = new HashMap<String, BigDecimal>();
+
+    var recipeSellingPriceValue = recipeService.calculateRecipeSellingPrice(id, profitPercentage);
+
+    recipeSellingPriceMap.put("recipeSellingPrice", recipeSellingPriceValue);
+
+    return ResponseEntity.status(HttpStatus.OK).body(recipeSellingPriceMap);
   }
 }

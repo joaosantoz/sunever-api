@@ -110,7 +110,30 @@ public class RecipeService {
     return ingredientCostRecipe;
   }
 
-  private boolean profitPercentageIsGreaterThanZero(Double profitPercentage) {
-    return profitPercentage.compareTo(0.0) > 0;
+  public BigDecimal calculateRecipeSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
+    if (!this.profitPercentageIsGreaterThanZero(profitPercentage)) {
+      throw new Exception("The field profitPercentage must be greater than zero.");
+    }
+
+    Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+
+    if (!recipeOptional.isPresent()) {
+      throw new Exception("Recipe " + recipeId + " not found.");
+    }
+
+    var recipe = recipeOptional.get();
+
+    var recipeProductionCost = recipe.getRecipeProductionCost();
+
+    BigDecimal recipeProfit = recipeProductionCost.multiply(profitPercentage).divide((BigDecimal.valueOf(100)), 2,
+        RoundingMode.HALF_UP);
+
+    BigDecimal recipeSellingPrice = recipeProductionCost.add(recipeProfit);
+
+    return recipeSellingPrice;
+  }
+
+  private boolean profitPercentageIsGreaterThanZero(BigDecimal profitPercentage) {
+    return profitPercentage.compareTo(new BigDecimal(0.0)) > 0;
   }
 }
