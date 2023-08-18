@@ -1,11 +1,17 @@
 package com.jovicsantos.suneverapi.services;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.jovicsantos.suneverapi.models.Ingredient;
 import com.jovicsantos.suneverapi.models.Recipe;
 import com.jovicsantos.suneverapi.models.RecipeIngredient;
 import com.jovicsantos.suneverapi.repositories.RecipeIngredientRepository;
@@ -18,6 +24,9 @@ public class RecipeService {
 
   @Autowired
   RecipeIngredientRepository recipeIngredientRepository;
+
+  @Autowired
+  IngredientService ingredientService;
 
   public boolean existsByName(String name) {
     return recipeRepository.existsByName(name);
@@ -40,5 +49,68 @@ public class RecipeService {
     }
 
     return savedRecipe;
+  }
+
+  public Recipe calculateRecipeCost(UUID recipeId) throws Exception {
+    Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+
+    if (!recipeOptional.isPresent()) {
+      throw new Exception("Recipe " + recipeId + " not found.");
+    }
+
+    var recipe = recipeOptional.get();
+
+    var recipeProductionCost = this.calculateAllRecipeIngredientsCost(recipe);
+
+    recipe.setRecipeProductionCost(recipeProductionCost);
+
+    return recipe;
+  }
+
+  private BigDecimal calculateAllRecipeIngredientsCost(Recipe recipe) throws Exception {
+    List<BigDecimal> ingredientsCostList = new ArrayList<>();
+
+    for (RecipeIngredient recipeIngredient : recipe.getIngredientList()) {
+
+      UUID ingredientId = recipeIngredient.getIngredientId();
+
+      Optional<Ingredient> ingredientOptional = ingredientService.findById(ingredientId);
+
+      if (!ingredientOptional.isPresent()) {
+        throw new Exception("Ingredient " + ingredientId + " not found.");
+      }
+
+      var ingredient = ingredientOptional.get();
+
+      BigDecimal ingredientQuantityPerRecipe = recipeIngredient.getIngredientQuantity();
+      BigDecimal ingredientQuantityPerMeasure = ingredient.getQuantityPerMeasure();
+      BigDecimal ingredientPrice = ingredient.getPrice();
+
+      var ingredientCost = this.calculateIngredientCost(
+          ingredientQuantityPerRecipe,
+          ingredientQuantityPerMeasure,
+          ingredientPrice);
+
+      ingredientsCostList.add(ingredientCost);
+    }
+
+    var ingredientsCostsSum = Arrays.asList((ingredientsCostList).stream().reduce(BigDecimal.ZERO, BigDecimal::add))
+        .get(0);
+
+    return ingredientsCostsSum;
+  }
+
+  private BigDecimal calculateIngredientCost(
+      BigDecimal ingredientQuantityPerRecipe,
+      BigDecimal ingredientQuantityPerMeasure,
+      BigDecimal ingredientPrice) {
+    var ingredientCostOfOneMeasure = ingredientQuantityPerMeasure.divide(ingredientPrice, 2, RoundingMode.HALF_UP);
+    var ingredientCostRecipe = ingredientQuantityPerRecipe.divide(ingredientCostOfOneMeasure, 2, RoundingMode.HALF_UP);
+
+    return ingredientCostRecipe;
+  }
+
+  private boolean profitPercentageIsGreaterThanZero(Double profitPercentage) {
+    return profitPercentage.compareTo(0.0) > 0;
   }
 }

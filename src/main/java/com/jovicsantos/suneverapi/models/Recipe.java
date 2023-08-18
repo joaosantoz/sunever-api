@@ -1,6 +1,7 @@
 package com.jovicsantos.suneverapi.models;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,4 +31,5 @@ public class Recipe implements Serializable {
   private String description;
   @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
   private List<RecipeIngredient> ingredientList;
+  private BigDecimal recipeProductionCost;
 }

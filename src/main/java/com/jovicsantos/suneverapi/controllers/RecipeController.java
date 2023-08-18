@@ -3,14 +3,18 @@ package com.jovicsantos.suneverapi.controllers;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.jovicsantos.suneverapi.dtos.RecipeDto;
@@ -33,7 +37,7 @@ public class RecipeController {
   IngredientService ingredientService;
 
   @PostMapping
-  public ResponseEntity<Object> saveRecipe(@RequestBody @Valid RecipeDto recipeDto) {
+  public ResponseEntity<Object> saveRecipe(@RequestBody @Valid RecipeDto recipeDto) throws Exception {
     if (recipeService.existsByName(recipeDto.name())) {
       return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This recipe already exists.");
     }
@@ -61,7 +65,16 @@ public class RecipeController {
     }
 
     recipeModel.setIngredientList(ingredientList);
+    var savedRecipe = recipeService.save(recipeModel, ingredientList);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.save(recipeModel, ingredientList));
+    return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.calculateRecipeCost(savedRecipe.getId()));
+  }
+
+  @GetMapping("/calculate/{id}")
+  public ResponseEntity<Recipe> calculate(@PathVariable UUID id,
+      @RequestParam(required = true) Double profitPercentage) throws Exception {
+    Recipe recipeWithValuesCalculated = recipeService.calculateRecipeCost(id);
+
+    return ResponseEntity.status(HttpStatus.OK).body(recipeWithValuesCalculated);
   }
 }
