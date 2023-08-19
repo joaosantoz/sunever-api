@@ -61,8 +61,8 @@ public class RecipeController {
 
       var recipeIngredientModel = new RecipeIngredient();
 
-      recipeIngredientModel.setIngredientId(ingredient.id());
-      recipeIngredientModel.setIngredientQuantity(ingredient.quantity());
+      recipeIngredientModel.setId(ingredient.id());
+      recipeIngredientModel.setQuantity(ingredient.quantity());
 
       ingredientList.add(recipeIngredientModel);
     }

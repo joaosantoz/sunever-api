@@ -25,16 +25,17 @@ public class RecipeIngredient implements Serializable {
 
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private UUID id;
+  @JsonIgnore
+  private UUID recipeIngredientId;
 
   @JsonIgnore
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "recipeId")
   private Recipe recipe;
 
-  @Column(nullable = false)
-  private UUID ingredientId;
+  @Column(nullable = false, name = "ingredient_id")
+  private UUID id;
 
-  @Column(nullable = false)
-  private BigDecimal ingredientQuantity;
+  @Column(nullable = false, name = "ingredient_quantity")
+  private BigDecimal quantity;
 }

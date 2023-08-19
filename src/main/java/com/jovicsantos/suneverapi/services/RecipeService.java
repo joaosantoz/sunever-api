@@ -72,7 +72,7 @@ public class RecipeService {
 
     for (RecipeIngredient recipeIngredient : recipe.getIngredientList()) {
 
-      UUID ingredientId = recipeIngredient.getIngredientId();
+      UUID ingredientId = recipeIngredient.getId();
 
       Optional<Ingredient> ingredientOptional = ingredientService.findById(ingredientId);
 
@@ -82,7 +82,7 @@ public class RecipeService {
 
       var ingredient = ingredientOptional.get();
 
-      BigDecimal ingredientQuantityPerRecipe = recipeIngredient.getIngredientQuantity();
+      BigDecimal ingredientQuantityPerRecipe = recipeIngredient.getQuantity();
       BigDecimal ingredientQuantityPerMeasure = ingredient.getQuantityPerMeasure();
       BigDecimal ingredientPrice = ingredient.getPrice();
 
