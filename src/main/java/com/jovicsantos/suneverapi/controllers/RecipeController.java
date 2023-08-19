@@ -69,21 +69,23 @@ public class RecipeController {
 
     recipeModel.setIngredientList(ingredientList);
     var savedRecipe = recipeService.save(recipeModel, ingredientList);
+    recipeService.calculateRecipeProductionCost(savedRecipe.getId());
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.calculateRecipeCost(savedRecipe.getId()));
+    return ResponseEntity.status(HttpStatus.CREATED)
+        .body(recipeService.calculatePortionProductionCost(savedRecipe.getId()));
   }
 
-  @GetMapping("/calculate/{id}")
-  public ResponseEntity<Map<String, BigDecimal>> calculate(@PathVariable UUID id,
+  @GetMapping("/calculate/{recipeId}")
+  public ResponseEntity<Map<String, BigDecimal>> calculate(@PathVariable UUID recipeId,
       @RequestParam(required = true) BigDecimal profitPercentage) throws Exception {
-    recipeService.calculateRecipeCost(id);
+    Map<String, BigDecimal> sellingPricesMap = new HashMap<String, BigDecimal>();
 
-    Map<String, BigDecimal> recipeSellingPriceMap = new HashMap<String, BigDecimal>();
+    var recipeSellingPriceValue = recipeService.calculateRecipeSellingPrice(recipeId, profitPercentage);
+    var portionSellingPrice = recipeService.calculatePortionSellingPrice(recipeId, profitPercentage);
 
-    var recipeSellingPriceValue = recipeService.calculateRecipeSellingPrice(id, profitPercentage);
+    sellingPricesMap.put("recipeSellingPrice", recipeSellingPriceValue);
+    sellingPricesMap.put("portionSellingPrice", portionSellingPrice);
 
-    recipeSellingPriceMap.put("recipeSellingPrice", recipeSellingPriceValue);
-
-    return ResponseEntity.status(HttpStatus.OK).body(recipeSellingPriceMap);
+    return ResponseEntity.status(HttpStatus.OK).body(sellingPricesMap);
   }
 }

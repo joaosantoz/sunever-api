@@ -40,6 +40,8 @@ public class Recipe implements Serializable {
   private List<RecipeIngredient> ingredientList;
   @Transient
   private BigDecimal recipeProductionCost;
+  @Transient
+  private BigDecimal portionProductionCost;
   @JsonIgnore
   @Transient
   private BigDecimal recipeSellingPrice;

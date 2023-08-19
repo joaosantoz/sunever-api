@@ -51,7 +51,7 @@ public class RecipeService {
     return savedRecipe;
   }
 
-  public Recipe calculateRecipeCost(UUID recipeId) throws Exception {
+  public Recipe calculateRecipeProductionCost(UUID recipeId) throws Exception {
     Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
 
     if (!recipeOptional.isPresent()) {
@@ -62,7 +62,7 @@ public class RecipeService {
 
     var recipeProductionCost = this.calculateAllRecipeIngredientsCost(recipe);
 
-    recipe.setRecipeProductionCost(recipeProductionCost);
+    recipe.setRecipeProductionCost(recipeProductionCost.setScale(2, RoundingMode.HALF_UP));
 
     return recipe;
   }
@@ -104,13 +104,15 @@ public class RecipeService {
       BigDecimal ingredientQuantityPerRecipe,
       BigDecimal ingredientQuantityPerMeasure,
       BigDecimal ingredientPrice) {
-    var ingredientCostOfOneMeasure = ingredientQuantityPerMeasure.divide(ingredientPrice, 2, RoundingMode.HALF_UP);
-    var ingredientCostRecipe = ingredientQuantityPerRecipe.divide(ingredientCostOfOneMeasure, 2, RoundingMode.HALF_UP);
+    var ingredientCostOfOneMeasure = ingredientQuantityPerMeasure.divide(ingredientPrice, RoundingMode.HALF_UP);
+    var ingredientCostRecipe = ingredientQuantityPerRecipe.divide(ingredientCostOfOneMeasure, RoundingMode.HALF_UP);
 
     return ingredientCostRecipe;
   }
 
   public BigDecimal calculateRecipeSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
+    this.calculateRecipeProductionCost(recipeId);
+
     if (!this.profitPercentageIsGreaterThanZero(profitPercentage)) {
       throw new Exception("The field profitPercentage must be greater than zero.");
     }
@@ -125,12 +127,35 @@ public class RecipeService {
 
     var recipeProductionCost = recipe.getRecipeProductionCost();
 
-    BigDecimal recipeProfit = recipeProductionCost.multiply(profitPercentage).divide((BigDecimal.valueOf(100)), 2,
-        RoundingMode.HALF_UP);
+    BigDecimal recipeProfit = recipeProductionCost.multiply(profitPercentage).divide(
+        (BigDecimal.valueOf(100)), RoundingMode.HALF_UP);
 
     BigDecimal recipeSellingPrice = recipeProductionCost.add(recipeProfit);
 
-    return recipeSellingPrice;
+    return recipeSellingPrice.setScale(2, RoundingMode.HALF_UP);
+  }
+
+  public Recipe calculatePortionProductionCost(UUID recipeId) throws Exception {
+    var recipeCalculated = this.calculateRecipeProductionCost(recipeId);
+    var portions = recipeCalculated.getPortions();
+    var recipeProductionCost = recipeCalculated.getRecipeProductionCost();
+
+    BigDecimal portionProductionCost = recipeProductionCost.divide(BigDecimal.valueOf(portions), RoundingMode.HALF_UP);
+
+    recipeCalculated.setPortionProductionCost(portionProductionCost.setScale(2, RoundingMode.HALF_UP));
+
+    return recipeCalculated;
+  }
+
+  public BigDecimal calculatePortionSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
+    var portionProductionCost = this.calculatePortionProductionCost(recipeId).getPortionProductionCost();
+
+    BigDecimal portionProfit = portionProductionCost.multiply(profitPercentage).divide(
+        (BigDecimal.valueOf(100)), RoundingMode.HALF_UP);
+
+    BigDecimal portionSellingPrice = portionProductionCost.add(portionProfit);
+
+    return portionSellingPrice.setScale(2, RoundingMode.HALF_UP);
   }
 
   private boolean profitPercentageIsGreaterThanZero(BigDecimal profitPercentage) {
