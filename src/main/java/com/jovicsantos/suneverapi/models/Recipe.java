@@ -5,6 +5,8 @@ import java.math.BigDecimal;
 import java.util.List;
 import java.util.UUID;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -30,10 +32,15 @@ public class Recipe implements Serializable {
   private String name;
   @Column(nullable = false)
   private String description;
+  @Column(nullable = false)
+  private String imageLink;
+  @Column(nullable = false)
+  private Integer portions;
   @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
   private List<RecipeIngredient> ingredientList;
   @Transient
   private BigDecimal recipeProductionCost;
+  @JsonIgnore
   @Transient
   private BigDecimal recipeSellingPrice;
 }
