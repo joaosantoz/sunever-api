@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.services;
+package com.jovicsantos.suneverapi.infrastructure.service;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,8 +6,8 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jovicsantos.suneverapi.models.Ingredient;
-import com.jovicsantos.suneverapi.repositories.IngredientRepository;
+import com.jovicsantos.suneverapi.domain.entity.Ingredient;
+import com.jovicsantos.suneverapi.infrastructure.repository.IngredientRepository;
 
 @Service
 public class IngredientService {

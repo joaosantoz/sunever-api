@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.services;
+package com.jovicsantos.suneverapi.infrastructure.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -11,11 +11,11 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jovicsantos.suneverapi.models.Ingredient;
-import com.jovicsantos.suneverapi.models.Recipe;
-import com.jovicsantos.suneverapi.models.RecipeIngredient;
-import com.jovicsantos.suneverapi.repositories.RecipeIngredientRepository;
-import com.jovicsantos.suneverapi.repositories.RecipeRepository;
+import com.jovicsantos.suneverapi.domain.entity.Ingredient;
+import com.jovicsantos.suneverapi.domain.entity.Recipe;
+import com.jovicsantos.suneverapi.domain.entity.RecipeIngredient;
+import com.jovicsantos.suneverapi.infrastructure.repository.RecipeIngredientRepository;
+import com.jovicsantos.suneverapi.infrastructure.repository.RecipeRepository;
 
 @Service
 public class RecipeService {

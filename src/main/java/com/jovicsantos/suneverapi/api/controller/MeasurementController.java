@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.controllers;
+package com.jovicsantos.suneverapi.api.controller;
 
 import java.util.UUID;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jovicsantos.suneverapi.dtos.MeasurementDto;
-import com.jovicsantos.suneverapi.models.Measurement;
-import com.jovicsantos.suneverapi.services.MeasurementService;
+import com.jovicsantos.suneverapi.application.dto.MeasurementDto;
+import com.jovicsantos.suneverapi.domain.entity.Measurement;
+import com.jovicsantos.suneverapi.infrastructure.service.MeasurementService;
 
 import jakarta.validation.Valid;
 

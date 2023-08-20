@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.models;
+package com.jovicsantos.suneverapi.domain.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;

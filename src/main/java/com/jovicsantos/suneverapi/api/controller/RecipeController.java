@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.controllers;
+package com.jovicsantos.suneverapi.api.controller;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -20,13 +20,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jovicsantos.suneverapi.dtos.RecipeDto;
-import com.jovicsantos.suneverapi.dtos.RecipeIngredientsDto;
-import com.jovicsantos.suneverapi.models.Ingredient;
-import com.jovicsantos.suneverapi.models.Recipe;
-import com.jovicsantos.suneverapi.models.RecipeIngredient;
-import com.jovicsantos.suneverapi.services.IngredientService;
-import com.jovicsantos.suneverapi.services.RecipeService;
+import com.jovicsantos.suneverapi.application.dto.RecipeDto;
+import com.jovicsantos.suneverapi.application.dto.RecipeIngredientsDto;
+import com.jovicsantos.suneverapi.domain.entity.Ingredient;
+import com.jovicsantos.suneverapi.domain.entity.Recipe;
+import com.jovicsantos.suneverapi.domain.entity.RecipeIngredient;
+import com.jovicsantos.suneverapi.infrastructure.service.IngredientService;
+import com.jovicsantos.suneverapi.infrastructure.service.RecipeService;
 
 import jakarta.validation.Valid;
 
