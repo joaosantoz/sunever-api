@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.domain.entity;
+package com.jovicsantos.suneverapi.infrastructure.db.entity;
 
 import java.io.Serializable;
 import java.util.UUID;
@@ -14,7 +14,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "measurement")
-public class Measurement implements Serializable {
+public class MeasurementEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id

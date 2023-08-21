@@ -11,9 +11,9 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jovicsantos.suneverapi.domain.entity.Ingredient;
-import com.jovicsantos.suneverapi.domain.entity.Recipe;
-import com.jovicsantos.suneverapi.domain.entity.RecipeIngredient;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeIngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
 import com.jovicsantos.suneverapi.infrastructure.repository.RecipeIngredientRepository;
 import com.jovicsantos.suneverapi.infrastructure.repository.RecipeRepository;
 
@@ -32,27 +32,27 @@ public class RecipeService {
     return recipeRepository.existsByName(name);
   }
 
-  public Recipe save(Recipe recipe, List<RecipeIngredient> ingredients) {
-    Recipe savedRecipe = recipeRepository.save(recipe);
+  public RecipeEntity save(RecipeEntity recipe, List<RecipeIngredientEntity> ingredients) {
+    RecipeEntity savedRecipe = recipeRepository.save(recipe);
 
-    List<RecipeIngredient> recipeIngredientList = new ArrayList<>();
+    List<RecipeIngredientEntity> recipeIngredientList = new ArrayList<>();
 
-    for (RecipeIngredient ingredient : ingredients) {
-      RecipeIngredient ingredientUpdated = ingredient;
+    for (RecipeIngredientEntity ingredient : ingredients) {
+      RecipeIngredientEntity ingredientUpdated = ingredient;
       ingredientUpdated.setRecipe(savedRecipe);
 
       recipeIngredientList.add(ingredientUpdated);
     }
 
-    for (RecipeIngredient recipeIngredient : recipeIngredientList) {
+    for (RecipeIngredientEntity recipeIngredient : recipeIngredientList) {
       recipeIngredientRepository.save(recipeIngredient);
     }
 
     return savedRecipe;
   }
 
-  public Recipe calculateRecipeProductionCost(UUID recipeId) throws Exception {
-    Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+  public RecipeEntity calculateRecipeProductionCost(UUID recipeId) throws Exception {
+    Optional<RecipeEntity> recipeOptional = recipeRepository.findById(recipeId);
 
     if (!recipeOptional.isPresent()) {
       throw new Exception("Recipe " + recipeId + " not found.");
@@ -67,14 +67,14 @@ public class RecipeService {
     return recipe;
   }
 
-  private BigDecimal calculateAllRecipeIngredientsCost(Recipe recipe) throws Exception {
+  private BigDecimal calculateAllRecipeIngredientsCost(RecipeEntity recipe) throws Exception {
     List<BigDecimal> ingredientsCostList = new ArrayList<>();
 
-    for (RecipeIngredient recipeIngredient : recipe.getIngredientList()) {
+    for (RecipeIngredientEntity recipeIngredient : recipe.getIngredientList()) {
 
       UUID ingredientId = recipeIngredient.getId();
 
-      Optional<Ingredient> ingredientOptional = ingredientService.findById(ingredientId);
+      Optional<IngredientEntity> ingredientOptional = ingredientService.findById(ingredientId);
 
       if (!ingredientOptional.isPresent()) {
         throw new Exception("Ingredient " + ingredientId + " not found.");
@@ -117,7 +117,7 @@ public class RecipeService {
       throw new Exception("The field profitPercentage must be greater than zero.");
     }
 
-    Optional<Recipe> recipeOptional = recipeRepository.findById(recipeId);
+    Optional<RecipeEntity> recipeOptional = recipeRepository.findById(recipeId);
 
     if (!recipeOptional.isPresent()) {
       throw new Exception("Recipe " + recipeId + " not found.");
@@ -135,7 +135,7 @@ public class RecipeService {
     return recipeSellingPrice.setScale(2, RoundingMode.HALF_UP);
   }
 
-  public Recipe calculatePortionProductionCost(UUID recipeId) throws Exception {
+  public RecipeEntity calculatePortionProductionCost(UUID recipeId) throws Exception {
     var recipeCalculated = this.calculateRecipeProductionCost(recipeId);
     var portions = recipeCalculated.getPortions();
     var recipeProductionCost = recipeCalculated.getRecipeProductionCost();

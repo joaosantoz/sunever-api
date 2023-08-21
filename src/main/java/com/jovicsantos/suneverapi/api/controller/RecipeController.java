@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jovicsantos.suneverapi.application.dto.RecipeDto;
-import com.jovicsantos.suneverapi.application.dto.RecipeIngredientsDto;
-import com.jovicsantos.suneverapi.domain.entity.Ingredient;
-import com.jovicsantos.suneverapi.domain.entity.Recipe;
-import com.jovicsantos.suneverapi.domain.entity.RecipeIngredient;
+import com.jovicsantos.suneverapi.api.dto.RecipeDto;
+import com.jovicsantos.suneverapi.api.dto.RecipeIngredientsDto;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeIngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
 import com.jovicsantos.suneverapi.infrastructure.service.IngredientService;
 import com.jovicsantos.suneverapi.infrastructure.service.RecipeService;
 
@@ -45,21 +45,21 @@ public class RecipeController {
       return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This recipe already exists.");
     }
 
-    var recipeModel = new Recipe();
+    var recipeModel = new RecipeEntity();
     BeanUtils.copyProperties(recipeDto, recipeModel);
 
     List<RecipeIngredientsDto> recipeIngredientsList = recipeDto.ingredients();
 
-    ArrayList<RecipeIngredient> ingredientList = new ArrayList<>();
+    ArrayList<RecipeIngredientEntity> ingredientList = new ArrayList<>();
 
     for (RecipeIngredientsDto ingredient : recipeIngredientsList) {
-      Optional<Ingredient> ingredientOptional = ingredientService.findById(ingredient.id());
+      Optional<IngredientEntity> ingredientOptional = ingredientService.findById(ingredient.id());
 
       if (ingredientOptional.isEmpty()) {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient " + ingredient.id() + " not found.");
       }
 
-      var recipeIngredientModel = new RecipeIngredient();
+      var recipeIngredientModel = new RecipeIngredientEntity();
 
       recipeIngredientModel.setId(ingredient.id());
       recipeIngredientModel.setQuantity(ingredient.quantity());

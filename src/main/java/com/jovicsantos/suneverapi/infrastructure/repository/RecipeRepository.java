@@ -4,8 +4,8 @@ import java.util.UUID;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.jovicsantos.suneverapi.domain.entity.Recipe;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
 
-public interface RecipeRepository extends JpaRepository<Recipe, UUID> {
+public interface RecipeRepository extends JpaRepository<RecipeEntity, UUID> {
   boolean existsByName(String name);
 }
