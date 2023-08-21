@@ -4,6 +4,8 @@
   <img src="https://cdn.discordapp.com/attachments/1142321609068249128/1142321661715157042/sunever-logo-01.svg" alt="sunever" width="30%" />
 </p>
 
+[![CodeFactor](https://www.codefactor.io/repository/github/sunever-core/sunever-api/badge)](https://www.codefactor.io/repository/github/sunever-core/sunever-api)
+
 Welcome to the Sunever API repository! This project serves as the backend solution for efficiently managing various aspects of your business operations, such as recipe calculations, cash flow management, running cost analysis, and sales tracking.
 
 ## Features
