@@ -1,11 +1,12 @@
 package com.jovicsantos.suneverapi.infrastructure.repository;
 
-import java.util.UUID;
-
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.MeasurementEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.jovicsantos.suneverapi.infrastructure.db.entity.MeasurementEntity;
+import java.util.UUID;
 
 public interface MeasurementRepository extends JpaRepository<MeasurementEntity, UUID> {
-  boolean existsByName(String name);
+	boolean existsByName(String name);
+
+	boolean existsByAbbreviation(String abbreviation);
 }

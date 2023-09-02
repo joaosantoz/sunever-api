@@ -1,10 +1,15 @@
 package com.jovicsantos.suneverapi.api.dto;
 
-import org.hibernate.validator.constraints.Length;
+import com.jovicsantos.suneverapi.application.input.MeasurementInput;
+import com.jovicsantos.suneverapi.application.output.MeasurementOutput;
+import com.jovicsantos.suneverapi.domain.Measurement;
 
-import jakarta.validation.constraints.NotBlank;
+public class MeasurementDto {
+	public Measurement toDomain(MeasurementInput measurementInput) {
+		return new Measurement(null, measurementInput.getName(), measurementInput.getAbbreviation());
+	}
 
-public record MeasurementDto(
-		@NotBlank String name,
-		@NotBlank @Length(max = 10) String abbreviation) {
+	public MeasurementOutput toOutput(Measurement measurement) {
+		return new MeasurementOutput(measurement.getId(), measurement.getName(), measurement.getAbbreviation());
+	}
 }

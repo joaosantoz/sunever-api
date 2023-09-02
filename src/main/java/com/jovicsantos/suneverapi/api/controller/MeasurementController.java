@@ -1,87 +1,67 @@
 package com.jovicsantos.suneverapi.api.controller;
 
-import java.util.UUID;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
+import com.jovicsantos.suneverapi.api.dto.MeasurementDto;
+import com.jovicsantos.suneverapi.application.input.MeasurementInput;
+import com.jovicsantos.suneverapi.application.interactor.MeasurementInteractor;
+import com.jovicsantos.suneverapi.application.output.MeasurementOutput;
+import com.jovicsantos.suneverapi.domain.Measurement;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import com.jovicsantos.suneverapi.api.dto.MeasurementDto;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.MeasurementEntity;
-import com.jovicsantos.suneverapi.infrastructure.service.MeasurementService;
-
-import jakarta.validation.Valid;
+import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/measurements")
 public class MeasurementController {
-  @Autowired
-  MeasurementService measurementService;
+	private final MeasurementInteractor measurementInteractor;
+	private final MeasurementDto measurementDto;
 
-  @PostMapping
-  public ResponseEntity<Object> saveMeasurement(@RequestBody @Valid MeasurementDto measurementDto) {
-    if (measurementService.existsByName(measurementDto.name())) {
-      return ResponseEntity.status(HttpStatus.CONFLICT)
-          .body("Conflict: This measurement already exists.");
-    }
+	public MeasurementController(MeasurementInteractor measurementInteractor, MeasurementDto measurementDto) {
+		this.measurementInteractor = measurementInteractor;
+		this.measurementDto = measurementDto;
+	}
 
-    var measurementModel = new MeasurementEntity();
-    BeanUtils.copyProperties(measurementDto, measurementModel);
+	@PostMapping
+	public ResponseEntity<MeasurementOutput> saveMeasurement(@RequestBody @Valid MeasurementInput measurementInput) {
+		Measurement measurementDomain = measurementDto.toDomain(measurementInput);
+		Measurement measurementSaved = measurementInteractor.save(measurementDomain);
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(measurementService.save(measurementModel));
-  }
+		return ResponseEntity.status(HttpStatus.CREATED).body(measurementDto.toOutput(measurementSaved));
+	}
 
-  @GetMapping
-  public ResponseEntity<Iterable<MeasurementEntity>> getAllMeasurements() {
-    return ResponseEntity.status(HttpStatus.OK).body(measurementService.findAll());
-  }
+	@GetMapping("/{id}")
+	public ResponseEntity<MeasurementOutput> findMeasurement(@PathVariable UUID id) {
+		Measurement measurement = measurementInteractor.find(id);
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Object> getMeasurementById(@PathVariable UUID id) {
-    var optionalMeasurement = measurementService.findById(id);
+		return ResponseEntity.status(HttpStatus.OK).body(measurementDto.toOutput(measurement));
+	}
 
-    if (optionalMeasurement.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
-    }
+	@GetMapping
+	public ResponseEntity<List<MeasurementOutput>> getAllMeasurements() {
+		List<Measurement> allMeasurements = measurementInteractor.findAll();
 
-    return ResponseEntity.status(HttpStatus.OK).body(optionalMeasurement.get());
-  }
+		return ResponseEntity.status(HttpStatus.OK).body(allMeasurements.stream().map(measurementDto::toOutput).toList());
+	}
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteMeasurementById(@PathVariable UUID id) {
-    var optionalMeasurement = measurementService.findById(id);
+	@PutMapping("/{id}")
+	public ResponseEntity<MeasurementOutput> updateMeasurementById(
+					@PathVariable UUID id,
+					@RequestBody @Valid MeasurementInput measurementInput) {
+		Measurement measurementDomain = measurementDto.toDomain(measurementInput);
+		measurementDomain.setId(id);
+		
+		Measurement measurementUpdated = measurementInteractor.update(id, measurementDomain);
 
-    if (optionalMeasurement.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
-    }
+		return ResponseEntity.status(HttpStatus.OK).body(measurementDto.toOutput(measurementUpdated));
+	}
 
-    measurementService.deleteById(id);
+	@DeleteMapping("/{id}")
+	public ResponseEntity<String> deleteMeasurementById(@PathVariable UUID id) {
+		measurementInteractor.delete(id);
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Measurement deleted successfully.");
-  }
-
-  @PutMapping("/{id}")
-  public ResponseEntity<Object> updateMeasurementById(@PathVariable UUID id,
-      @RequestBody @Valid MeasurementDto measurementDto) {
-    var optionalMeasurement = measurementService.findById(id);
-
-    if (optionalMeasurement.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
-    }
-
-    var measurementModel = new MeasurementEntity();
-    BeanUtils.copyProperties(measurementDto, measurementModel);
-    measurementModel.setId(optionalMeasurement.get().getId());
-
-    return ResponseEntity.status(HttpStatus.OK).body(measurementService.save(measurementModel));
-  }
+		return ResponseEntity.status(HttpStatus.OK).body("Measurement " + id.toString() + " deleted successfully");
+	}
 }
