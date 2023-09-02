@@ -2,11 +2,11 @@ package com.jovicsantos.suneverapi.api.controller;
 
 import com.jovicsantos.suneverapi.api.dto.RecipeDto;
 import com.jovicsantos.suneverapi.api.dto.RecipeIngredientsDto;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeIngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.service.IngredientService;
-import com.jovicsantos.suneverapi.infrastructure.service.RecipeService;
+import com.jovicsantos.suneverapi.application.interactor.IngredientInteractor;
+import com.jovicsantos.suneverapi.application.interactor.RecipeInteractor;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.RecipeEntity;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.RecipeIngredientEntity;
 import jakarta.validation.Valid;
 import org.springframework.beans.BeanUtils;
 import org.springframework.http.HttpStatus;
@@ -19,18 +19,18 @@ import java.util.*;
 @RestController
 @RequestMapping("/recipes")
 public class RecipeController {
-	final RecipeService recipeService;
+	private final RecipeInteractor recipeInteractor;
 
-	final IngredientService ingredientService;
+	private final IngredientInteractor ingredientInteractor;
 
-	public RecipeController(RecipeService recipeService, IngredientService ingredientService) {
-		this.recipeService = recipeService;
-		this.ingredientService = ingredientService;
+	public RecipeController(RecipeInteractor recipeInteractor, IngredientInteractor ingredientInteractor) {
+		this.recipeInteractor = recipeInteractor;
+		this.ingredientInteractor = ingredientInteractor;
 	}
 
 	@PostMapping
 	public ResponseEntity<Object> saveRecipe(@RequestBody @Valid RecipeDto recipeDto) throws Exception {
-		if (recipeService.existsByName(recipeDto.name())) {
+		if (recipeInteractor.existsByName(recipeDto.name())) {
 			return ResponseEntity.status(HttpStatus.CONFLICT).body("Conflict: This recipe already exists.");
 		}
 
@@ -42,7 +42,7 @@ public class RecipeController {
 		ArrayList<RecipeIngredientEntity> ingredientList = new ArrayList<>();
 
 		for (RecipeIngredientsDto ingredient : recipeIngredientsList) {
-			Optional<IngredientEntity> ingredientOptional = ingredientService.findById(ingredient.id());
+			Optional<IngredientEntity> ingredientOptional = ingredientInteractor.findById(ingredient.id());
 
 			if (ingredientOptional.isEmpty()) {
 				return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient " + ingredient.id() + " not found.");
@@ -57,18 +57,18 @@ public class RecipeController {
 		}
 
 		recipeModel.setIngredientList(ingredientList);
-		var savedRecipe = recipeService.save(recipeModel, ingredientList);
-		recipeService.calculateRecipeProductionCost(savedRecipe.getId());
+		var savedRecipe = recipeInteractor.save(recipeModel, ingredientList);
+		recipeInteractor.calculateRecipeProductionCost(savedRecipe.getId());
 
-		return ResponseEntity.status(HttpStatus.CREATED).body(recipeService.calculatePortionProductionCost(savedRecipe.getId()));
+		return ResponseEntity.status(HttpStatus.CREATED).body(recipeInteractor.calculatePortionProductionCost(savedRecipe.getId()));
 	}
 
 	@GetMapping("/calculate/{recipeId}")
 	public ResponseEntity<Map<String, BigDecimal>> calculate(@PathVariable UUID recipeId, @RequestParam() BigDecimal profitPercentage) throws Exception {
 		Map<String, BigDecimal> sellingPricesMap = new HashMap<>();
 
-		var recipeSellingPriceValue = recipeService.calculateRecipeSellingPrice(recipeId, profitPercentage);
-		var portionSellingPrice = recipeService.calculatePortionSellingPrice(recipeId, profitPercentage);
+		var recipeSellingPriceValue = recipeInteractor.calculateRecipeSellingPrice(recipeId, profitPercentage);
+		var portionSellingPrice = recipeInteractor.calculatePortionSellingPrice(recipeId, profitPercentage);
 
 		sellingPricesMap.put("recipeSellingPrice", recipeSellingPriceValue);
 		sellingPricesMap.put("portionSellingPrice", portionSellingPrice);

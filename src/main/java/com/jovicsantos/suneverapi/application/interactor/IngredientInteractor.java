@@ -1,6 +1,6 @@
-package com.jovicsantos.suneverapi.infrastructure.service;
+package com.jovicsantos.suneverapi.application.interactor;
 
-import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.IngredientEntity;
 import com.jovicsantos.suneverapi.infrastructure.repository.IngredientRepository;
 import org.springframework.stereotype.Service;
 
@@ -8,10 +8,10 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class IngredientService {
-	final IngredientRepository ingredientRepository;
+public class IngredientInteractor {
+	private final IngredientRepository ingredientRepository;
 
-	public IngredientService(IngredientRepository ingredientRepository) {
+	public IngredientInteractor(IngredientRepository ingredientRepository) {
 		this.ingredientRepository = ingredientRepository;
 	}
 

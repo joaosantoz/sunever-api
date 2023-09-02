@@ -1,8 +1,8 @@
-package com.jovicsantos.suneverapi.infrastructure.service;
+package com.jovicsantos.suneverapi.application.interactor;
 
-import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeIngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.RecipeEntity;
+import com.jovicsantos.suneverapi.infrastructure.persistance.entity.RecipeIngredientEntity;
 import com.jovicsantos.suneverapi.infrastructure.repository.RecipeIngredientRepository;
 import com.jovicsantos.suneverapi.infrastructure.repository.RecipeRepository;
 import org.springframework.stereotype.Service;
@@ -15,17 +15,17 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Service
-public class RecipeService {
-	final RecipeRepository recipeRepository;
+public class RecipeInteractor {
+	private final RecipeRepository recipeRepository;
 
-	final RecipeIngredientRepository recipeIngredientRepository;
+	private final RecipeIngredientRepository recipeIngredientRepository;
 
-	final IngredientService ingredientService;
+	private final IngredientInteractor ingredientInteractor;
 
-	public RecipeService(RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, IngredientService ingredientService) {
+	public RecipeInteractor(RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, IngredientInteractor ingredientInteractor) {
 		this.recipeRepository = recipeRepository;
 		this.recipeIngredientRepository = recipeIngredientRepository;
-		this.ingredientService = ingredientService;
+		this.ingredientInteractor = ingredientInteractor;
 	}
 
 	public boolean existsByName(String name) {
@@ -71,7 +71,7 @@ public class RecipeService {
 
 			UUID ingredientId = recipeIngredient.getId();
 
-			Optional<IngredientEntity> ingredientOptional = ingredientService.findById(ingredientId);
+			Optional<IngredientEntity> ingredientOptional = ingredientInteractor.findById(ingredientId);
 
 			if (ingredientOptional.isEmpty()) {
 				throw new Exception("Ingredient " + ingredientId + " not found.");

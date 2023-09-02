@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.infrastructure.db.entity;
+package com.jovicsantos.suneverapi.infrastructure.persistance.entity;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
