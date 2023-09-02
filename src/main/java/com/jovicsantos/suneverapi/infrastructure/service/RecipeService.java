@@ -1,164 +1,149 @@
 package com.jovicsantos.suneverapi.infrastructure.service;
 
+import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeIngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.repository.RecipeIngredientRepository;
+import com.jovicsantos.suneverapi.infrastructure.repository.RecipeRepository;
+import org.springframework.stereotype.Service;
+
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeIngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.db.entity.RecipeEntity;
-import com.jovicsantos.suneverapi.infrastructure.repository.RecipeIngredientRepository;
-import com.jovicsantos.suneverapi.infrastructure.repository.RecipeRepository;
-
 @Service
 public class RecipeService {
-  @Autowired
-  RecipeRepository recipeRepository;
+	final RecipeRepository recipeRepository;
 
-  @Autowired
-  RecipeIngredientRepository recipeIngredientRepository;
+	final RecipeIngredientRepository recipeIngredientRepository;
 
-  @Autowired
-  IngredientService ingredientService;
+	final IngredientService ingredientService;
 
-  public boolean existsByName(String name) {
-    return recipeRepository.existsByName(name);
-  }
+	public RecipeService(RecipeRepository recipeRepository, RecipeIngredientRepository recipeIngredientRepository, IngredientService ingredientService) {
+		this.recipeRepository = recipeRepository;
+		this.recipeIngredientRepository = recipeIngredientRepository;
+		this.ingredientService = ingredientService;
+	}
 
-  public RecipeEntity save(RecipeEntity recipe, List<RecipeIngredientEntity> ingredients) {
-    RecipeEntity savedRecipe = recipeRepository.save(recipe);
+	public boolean existsByName(String name) {
+		return recipeRepository.existsByName(name);
+	}
 
-    List<RecipeIngredientEntity> recipeIngredientList = new ArrayList<>();
+	public RecipeEntity save(RecipeEntity recipe, List<RecipeIngredientEntity> ingredients) {
+		RecipeEntity savedRecipe = recipeRepository.save(recipe);
 
-    for (RecipeIngredientEntity ingredient : ingredients) {
-      RecipeIngredientEntity ingredientUpdated = ingredient;
-      ingredientUpdated.setRecipe(savedRecipe);
+		List<RecipeIngredientEntity> recipeIngredientList = new ArrayList<>();
 
-      recipeIngredientList.add(ingredientUpdated);
-    }
+		for (RecipeIngredientEntity ingredient : ingredients) {
+			ingredient.setRecipe(savedRecipe);
 
-    for (RecipeIngredientEntity recipeIngredient : recipeIngredientList) {
-      recipeIngredientRepository.save(recipeIngredient);
-    }
+			recipeIngredientList.add(ingredient);
+		}
 
-    return savedRecipe;
-  }
+		recipeIngredientRepository.saveAll(recipeIngredientList);
 
-  public RecipeEntity calculateRecipeProductionCost(UUID recipeId) throws Exception {
-    Optional<RecipeEntity> recipeOptional = recipeRepository.findById(recipeId);
+		return savedRecipe;
+	}
 
-    if (!recipeOptional.isPresent()) {
-      throw new Exception("Recipe " + recipeId + " not found.");
-    }
+	public RecipeEntity calculateRecipeProductionCost(UUID recipeId) throws Exception {
+		Optional<RecipeEntity> recipeOptional = recipeRepository.findById(recipeId);
 
-    var recipe = recipeOptional.get();
+		if (recipeOptional.isEmpty()) {
+			throw new Exception("Recipe " + recipeId + " not found.");
+		}
 
-    var recipeProductionCost = this.calculateAllRecipeIngredientsCost(recipe);
+		var recipe = recipeOptional.get();
 
-    recipe.setRecipeProductionCost(recipeProductionCost.setScale(2, RoundingMode.HALF_UP));
+		var recipeProductionCost = this.calculateAllRecipeIngredientsCost(recipe);
 
-    return recipe;
-  }
+		recipe.setRecipeProductionCost(recipeProductionCost.setScale(2, RoundingMode.HALF_UP));
 
-  private BigDecimal calculateAllRecipeIngredientsCost(RecipeEntity recipe) throws Exception {
-    List<BigDecimal> ingredientsCostList = new ArrayList<>();
+		return recipe;
+	}
 
-    for (RecipeIngredientEntity recipeIngredient : recipe.getIngredientList()) {
+	private BigDecimal calculateAllRecipeIngredientsCost(RecipeEntity recipe) throws Exception {
+		List<BigDecimal> ingredientsCostList = new ArrayList<>();
 
-      UUID ingredientId = recipeIngredient.getId();
+		for (RecipeIngredientEntity recipeIngredient : recipe.getIngredientList()) {
 
-      Optional<IngredientEntity> ingredientOptional = ingredientService.findById(ingredientId);
+			UUID ingredientId = recipeIngredient.getId();
 
-      if (!ingredientOptional.isPresent()) {
-        throw new Exception("Ingredient " + ingredientId + " not found.");
-      }
+			Optional<IngredientEntity> ingredientOptional = ingredientService.findById(ingredientId);
 
-      var ingredient = ingredientOptional.get();
+			if (ingredientOptional.isEmpty()) {
+				throw new Exception("Ingredient " + ingredientId + " not found.");
+			}
 
-      BigDecimal ingredientQuantityPerRecipe = recipeIngredient.getQuantity();
-      BigDecimal ingredientQuantityPerMeasure = ingredient.getQuantityPerMeasure();
-      BigDecimal ingredientPrice = ingredient.getPrice();
+			var ingredient = ingredientOptional.get();
 
-      var ingredientCost = this.calculateIngredientCost(
-          ingredientQuantityPerRecipe,
-          ingredientQuantityPerMeasure,
-          ingredientPrice);
+			BigDecimal ingredientQuantityPerRecipe = recipeIngredient.getQuantity();
+			BigDecimal ingredientQuantityPerMeasure = ingredient.getQuantityPerMeasure();
+			BigDecimal ingredientPrice = ingredient.getPrice();
 
-      ingredientsCostList.add(ingredientCost);
-    }
+			var ingredientCost = this.calculateIngredientCost(ingredientQuantityPerRecipe, ingredientQuantityPerMeasure, ingredientPrice);
 
-    var ingredientsCostsSum = Arrays.asList((ingredientsCostList).stream().reduce(BigDecimal.ZERO, BigDecimal::add))
-        .get(0);
+			ingredientsCostList.add(ingredientCost);
+		}
 
-    return ingredientsCostsSum;
-  }
+		return (ingredientsCostList).stream().reduce(BigDecimal.ZERO, BigDecimal::add);
+	}
 
-  private BigDecimal calculateIngredientCost(
-      BigDecimal ingredientQuantityPerRecipe,
-      BigDecimal ingredientQuantityPerMeasure,
-      BigDecimal ingredientPrice) {
-    var ingredientCostOfOneMeasure = ingredientQuantityPerMeasure.divide(ingredientPrice, RoundingMode.HALF_UP);
-    var ingredientCostRecipe = ingredientQuantityPerRecipe.divide(ingredientCostOfOneMeasure, RoundingMode.HALF_UP);
+	private BigDecimal calculateIngredientCost(BigDecimal ingredientQuantityPerRecipe, BigDecimal ingredientQuantityPerMeasure, BigDecimal ingredientPrice) {
+		var ingredientCostOfOneMeasure = ingredientQuantityPerMeasure.divide(ingredientPrice, RoundingMode.HALF_UP);
 
-    return ingredientCostRecipe;
-  }
+		return ingredientQuantityPerRecipe.divide(ingredientCostOfOneMeasure, RoundingMode.HALF_UP);
+	}
 
-  public BigDecimal calculateRecipeSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
-    this.calculateRecipeProductionCost(recipeId);
+	public BigDecimal calculateRecipeSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
+		this.calculateRecipeProductionCost(recipeId);
 
-    if (!this.profitPercentageIsGreaterThanZero(profitPercentage)) {
-      throw new Exception("The field profitPercentage must be greater than zero.");
-    }
+		if (!this.profitPercentageIsGreaterThanZero(profitPercentage)) {
+			throw new Exception("The field profitPercentage must be greater than zero.");
+		}
 
-    Optional<RecipeEntity> recipeOptional = recipeRepository.findById(recipeId);
+		Optional<RecipeEntity> recipeOptional = recipeRepository.findById(recipeId);
 
-    if (!recipeOptional.isPresent()) {
-      throw new Exception("Recipe " + recipeId + " not found.");
-    }
+		if (recipeOptional.isEmpty()) {
+			throw new Exception("Recipe " + recipeId + " not found.");
+		}
 
-    var recipe = recipeOptional.get();
+		var recipe = recipeOptional.get();
 
-    var recipeProductionCost = recipe.getRecipeProductionCost();
+		var recipeProductionCost = recipe.getRecipeProductionCost();
 
-    BigDecimal recipeProfit = recipeProductionCost.multiply(profitPercentage).divide(
-        (BigDecimal.valueOf(100)), RoundingMode.HALF_UP);
+		BigDecimal recipeProfit = recipeProductionCost.multiply(profitPercentage).divide((BigDecimal.valueOf(100)), RoundingMode.HALF_UP);
 
-    BigDecimal recipeSellingPrice = recipeProductionCost.add(recipeProfit);
+		BigDecimal recipeSellingPrice = recipeProductionCost.add(recipeProfit);
 
-    return recipeSellingPrice.setScale(2, RoundingMode.HALF_UP);
-  }
+		return recipeSellingPrice.setScale(2, RoundingMode.HALF_UP);
+	}
 
-  public RecipeEntity calculatePortionProductionCost(UUID recipeId) throws Exception {
-    var recipeCalculated = this.calculateRecipeProductionCost(recipeId);
-    var portions = recipeCalculated.getPortions();
-    var recipeProductionCost = recipeCalculated.getRecipeProductionCost();
+	public RecipeEntity calculatePortionProductionCost(UUID recipeId) throws Exception {
+		var recipeCalculated = this.calculateRecipeProductionCost(recipeId);
+		var portions = recipeCalculated.getPortions();
+		var recipeProductionCost = recipeCalculated.getRecipeProductionCost();
 
-    BigDecimal portionProductionCost = recipeProductionCost.divide(BigDecimal.valueOf(portions), RoundingMode.HALF_UP);
+		BigDecimal portionProductionCost = recipeProductionCost.divide(BigDecimal.valueOf(portions), RoundingMode.HALF_UP);
 
-    recipeCalculated.setPortionProductionCost(portionProductionCost.setScale(2, RoundingMode.HALF_UP));
+		recipeCalculated.setPortionProductionCost(portionProductionCost.setScale(2, RoundingMode.HALF_UP));
 
-    return recipeCalculated;
-  }
+		return recipeCalculated;
+	}
 
-  public BigDecimal calculatePortionSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
-    var portionProductionCost = this.calculatePortionProductionCost(recipeId).getPortionProductionCost();
+	public BigDecimal calculatePortionSellingPrice(UUID recipeId, BigDecimal profitPercentage) throws Exception {
+		var portionProductionCost = this.calculatePortionProductionCost(recipeId).getPortionProductionCost();
 
-    BigDecimal portionProfit = portionProductionCost.multiply(profitPercentage).divide(
-        (BigDecimal.valueOf(100)), RoundingMode.HALF_UP);
+		BigDecimal portionProfit = portionProductionCost.multiply(profitPercentage).divide((BigDecimal.valueOf(100)), RoundingMode.HALF_UP);
 
-    BigDecimal portionSellingPrice = portionProductionCost.add(portionProfit);
+		BigDecimal portionSellingPrice = portionProductionCost.add(portionProfit);
 
-    return portionSellingPrice.setScale(2, RoundingMode.HALF_UP);
-  }
+		return portionSellingPrice.setScale(2, RoundingMode.HALF_UP);
+	}
 
-  private boolean profitPercentageIsGreaterThanZero(BigDecimal profitPercentage) {
-    return profitPercentage.compareTo(new BigDecimal(0.0)) > 0;
-  }
+	private boolean profitPercentageIsGreaterThanZero(BigDecimal profitPercentage) {
+		return profitPercentage.compareTo(new BigDecimal("0.0")) > 0;
+	}
 }

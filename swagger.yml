@@ -8,20 +8,20 @@ info:
     url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 1.0.0
 servers:
-- url: https://virtserver.swaggerhub.com/joaosantoz/sunever-api/1.0.0
-  description: SwaggerHub API Auto Mocking
+  - url: http://localhost:8080
+    description: Local Development server
 tags:
-- name: Recipes
-  description: Recipes
-- name: Ingredients
-  description: Ingredients
-- name: Measurements
-  description: Measurements
+  - name: Recipes
+    description: Recipes
+  - name: Ingredients
+    description: Ingredients
+  - name: Measurements
+    description: Measurements
 paths:
   /measurements:
     get:
       tags:
-      - Measurements
+        - Measurements
       summary: List all measurements
       description: List all measurements
       responses:
@@ -35,7 +35,7 @@ paths:
                   $ref: '#/components/schemas/Measurement'
     post:
       tags:
-      - Measurements
+        - Measurements
       summary: Create measurement
       description: Create measurement
       requestBody:
@@ -56,20 +56,20 @@ paths:
   /measurements/{measurementId}:
     get:
       tags:
-      - Measurements
+        - Measurements
       summary: Find one measurement
       description: Find one measurement
       parameters:
-      - name: measurementId
-        in: path
-        description: Measurement Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: measurementId
+          in: path
+          description: Measurement Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       responses:
         "200":
           description: Success
@@ -81,20 +81,20 @@ paths:
                   $ref: '#/components/schemas/Measurement'
     put:
       tags:
-      - Measurements
+        - Measurements
       summary: Update one measurement
       description: Update one measurement
       parameters:
-      - name: measurementId
-        in: path
-        description: Measurement Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: measurementId
+          in: path
+          description: Measurement Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       requestBody:
         content:
           application/json:
@@ -112,27 +112,27 @@ paths:
                   $ref: '#/components/schemas/Measurement'
     delete:
       tags:
-      - Measurements
+        - Measurements
       summary: Delete one measurement
       description: Delete one measurement
       parameters:
-      - name: measurementId
-        in: path
-        description: Measurement Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: measurementId
+          in: path
+          description: Measurement Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       responses:
         "204":
           description: No Content
   /ingredients:
     get:
       tags:
-      - Ingredients
+        - Ingredients
       summary: List all ingredients
       description: List all ingredients
       responses:
@@ -146,7 +146,7 @@ paths:
                   $ref: '#/components/schemas/Ingredient'
     post:
       tags:
-      - Ingredients
+        - Ingredients
       summary: Create ingredient
       description: Create ingredient
       requestBody:
@@ -167,20 +167,20 @@ paths:
   /ingredients/{ingredientId}:
     get:
       tags:
-      - Ingredients
+        - Ingredients
       summary: Find one ingredient
       description: Find one ingredient
       parameters:
-      - name: ingredientId
-        in: path
-        description: Ingredient Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: ingredientId
+          in: path
+          description: Ingredient Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       responses:
         "200":
           description: Success
@@ -192,20 +192,20 @@ paths:
                   $ref: '#/components/schemas/Ingredient'
     put:
       tags:
-      - Ingredients
+        - Ingredients
       summary: Update one ingredient
       description: Update one ingredient
       parameters:
-      - name: ingredientId
-        in: path
-        description: Ingredients Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: ingredientId
+          in: path
+          description: Ingredients Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       requestBody:
         content:
           application/json:
@@ -223,27 +223,27 @@ paths:
                   $ref: '#/components/schemas/Ingredient'
     delete:
       tags:
-      - Ingredients
+        - Ingredients
       summary: Delete one ingredient
       description: Delete one ingredient
       parameters:
-      - name: ingredientId
-        in: path
-        description: Ingredients Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: ingredientId
+          in: path
+          description: Ingredients Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       responses:
         "204":
           description: No Content
   /recipes:
     get:
       tags:
-      - Recipes
+        - Recipes
       summary: List all recipes
       description: List all recipes
       responses:
@@ -257,7 +257,7 @@ paths:
                   $ref: '#/components/schemas/Recipe'
     post:
       tags:
-      - Recipes
+        - Recipes
       summary: Create recipe
       description: Create recipe
       requestBody:
@@ -278,20 +278,20 @@ paths:
   /recipes/{recipeId}:
     get:
       tags:
-      - Recipes
+        - Recipes
       summary: Find one recipe
       description: Find one recipe
       parameters:
-      - name: recipeId
-        in: path
-        description: Recipe Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: recipeId
+          in: path
+          description: Recipe Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       responses:
         "200":
           description: Success
@@ -303,20 +303,20 @@ paths:
                   $ref: '#/components/schemas/Recipe'
     put:
       tags:
-      - Recipes
+        - Recipes
       summary: Update one recipe
       description: Update one recipe
       parameters:
-      - name: recipeId
-        in: path
-        description: Recipes Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: recipeId
+          in: path
+          description: Recipes Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       requestBody:
         content:
           application/json:
@@ -334,51 +334,51 @@ paths:
                   $ref: '#/components/schemas/Recipe'
     delete:
       tags:
-      - Recipes
+        - Recipes
       summary: Delete one recipe
       description: Delete one recipe
       parameters:
-      - name: recipeId
-        in: path
-        description: Recipes Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: recipeId
+          in: path
+          description: Recipes Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
       responses:
         "204":
           description: No Content
   /recipes/calculate/{recipeId}:
     get:
       tags:
-      - Recipes
+        - Recipes
       summary: Calculate selling preice of one recipe
       description: Calculate selling preice of one recipe
       parameters:
-      - name: recipeId
-        in: path
-        description: Recipe Id
-        required: true
-        style: simple
-        explode: false
-        schema:
-          type: string
-          format: uuid
-          example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
-      - name: profitPercentage
-        in: query
-        description: Desired profit percentage
-        required: true
-        style: form
-        explode: true
-        schema:
-          minimum: 0.1
-          type: number
-          format: double
-          example: 110
+        - name: recipeId
+          in: path
+          description: Recipe Id
+          required: true
+          style: simple
+          explode: false
+          schema:
+            type: string
+            format: uuid
+            example: 2306dd9d-d497-43a0-94ef-d13ed07f7c74
+        - name: profitPercentage
+          in: query
+          description: Desired profit percentage
+          required: true
+          style: form
+          explode: true
+          schema:
+            minimum: 0.1
+            type: number
+            format: double
+            example: 110
       responses:
         "200":
           description: Success
@@ -390,8 +390,8 @@ components:
   schemas:
     Measurement:
       required:
-      - abbreviation
-      - name
+        - abbreviation
+        - name
       type: object
       properties:
         id:
@@ -407,10 +407,10 @@ components:
           example: kg
     Ingredient:
       required:
-      - measurementId
-      - name
-      - price
-      - quantityPerMeasure
+        - measurementId
+        - name
+        - price
+        - quantityPerMeasure
       type: object
       properties:
         id:
@@ -437,10 +437,10 @@ components:
           example: b57980d1-f5b8-425c-b10a-aa5dad5dafd3
     Recipe:
       required:
-      - description
-      - ingredients
-      - name
-      - portions
+        - description
+        - ingredients
+        - name
+        - portions
       type: object
       properties:
         id:
@@ -477,8 +477,8 @@ components:
           example: 4.65
     IngredientRecipe:
       required:
-      - id
-      - quantity
+        - id
+        - quantity
       type: object
       properties:
         id:

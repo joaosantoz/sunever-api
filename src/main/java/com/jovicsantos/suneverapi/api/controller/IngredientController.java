@@ -1,104 +1,95 @@
 package com.jovicsantos.suneverapi.api.controller;
 
-import java.util.UUID;
-
-import org.springframework.beans.BeanUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
 import com.jovicsantos.suneverapi.api.dto.IngredientDto;
 import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
 import com.jovicsantos.suneverapi.infrastructure.service.IngredientService;
 import com.jovicsantos.suneverapi.infrastructure.service.MeasurementService;
-
 import jakarta.validation.Valid;
-import lombok.var;
+import org.springframework.beans.BeanUtils;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/ingredients")
 public class IngredientController {
-  @Autowired
-  IngredientService ingredientService;
-  @Autowired
-  MeasurementService measurementService;
+	final IngredientService ingredientService;
+	final MeasurementService measurementService;
 
-  @PostMapping
-  public ResponseEntity<Object> saveIngredient(@RequestBody @Valid IngredientDto ingredientDto) {
-    if (ingredientService.existsByName(ingredientDto.name())) {
-      return ResponseEntity.status(HttpStatus.CONFLICT)
-          .body("Conflict: This ingredient already exists.");
-    }
+	public IngredientController(IngredientService ingredientService, MeasurementService measurementService) {
+		this.ingredientService = ingredientService;
+		this.measurementService = measurementService;
+	}
 
-    var ingredientModel = new IngredientEntity();
-    BeanUtils.copyProperties(ingredientDto, ingredientModel);
+	@PostMapping
+	public ResponseEntity<Object> saveIngredient(@RequestBody @Valid IngredientDto ingredientDto) {
+		if (ingredientService.existsByName(ingredientDto.name())) {
+			return ResponseEntity.status(HttpStatus.CONFLICT)
+							.body("Conflict: This ingredient already exists.");
+		}
 
-    var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
+		var ingredientModel = new IngredientEntity();
+		BeanUtils.copyProperties(ingredientDto, ingredientModel);
 
-    if (optionalMeasurement.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
-    }
+		var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
 
-    ingredientModel.setMeasurement(optionalMeasurement.get());
+		if (optionalMeasurement.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
+		}
 
-    return ResponseEntity.status(HttpStatus.CREATED).body(ingredientService.save(ingredientModel));
-  }
+		ingredientModel.setMeasurement(optionalMeasurement.get());
 
-  @GetMapping
-  public ResponseEntity<Object> getAllIngredients() {
-    return ResponseEntity.status(HttpStatus.OK).body(ingredientService.findAll());
-  }
+		return ResponseEntity.status(HttpStatus.CREATED).body(ingredientService.save(ingredientModel));
+	}
 
-  @GetMapping("/{id}")
-  public ResponseEntity<Object> getIngredientById(@PathVariable UUID id) {
-    var optionalIngredient = ingredientService.findById(id);
+	@GetMapping
+	public ResponseEntity<Object> getAllIngredients() {
+		return ResponseEntity.status(HttpStatus.OK).body(ingredientService.findAll());
+	}
 
-    if (optionalIngredient.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
-    }
+	@GetMapping("/{id}")
+	public ResponseEntity<Object> getIngredientById(@PathVariable UUID id) {
+		var optionalIngredient = ingredientService.findById(id);
 
-    return ResponseEntity.status(HttpStatus.OK).body(optionalIngredient.get());
-  }
+		return optionalIngredient.<ResponseEntity<Object>>map(ingredientEntity ->
+						ResponseEntity.status(HttpStatus.OK).body(ingredientEntity)).orElseGet(() ->
+						ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found."));
 
-  @DeleteMapping("/{id}")
-  public ResponseEntity<Object> deleteIngredientById(@PathVariable UUID id) {
-    var optionalIngredient = ingredientService.findById(id);
+	}
 
-    if (optionalIngredient.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
-    }
+	@DeleteMapping("/{id}")
+	public ResponseEntity<Object> deleteIngredientById(@PathVariable UUID id) {
+		var optionalIngredient = ingredientService.findById(id);
 
-    ingredientService.deleteById(id);
+		if (optionalIngredient.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
+		}
 
-    return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Ingredient deleted successfully.");
-  }
+		ingredientService.deleteById(id);
 
-  @PutMapping("/{id}")
-  public ResponseEntity<Object> updateIngredientById(@PathVariable UUID id,
-      @RequestBody @Valid IngredientDto ingredientDto) {
-    var optionalIngredient = ingredientService.findById(id);
-    if (optionalIngredient.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
-    }
+		return ResponseEntity.status(HttpStatus.NO_CONTENT).body("Ingredient deleted successfully.");
+	}
 
-    var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
-    if (optionalMeasurement.isEmpty()) {
-      return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
-    }
+	@PutMapping("/{id}")
+	public ResponseEntity<Object> updateIngredientById(@PathVariable UUID id,
+																										 @RequestBody @Valid IngredientDto ingredientDto) {
+		var optionalIngredient = ingredientService.findById(id);
+		if (optionalIngredient.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Ingredient not found.");
+		}
 
-    var ingredientModel = new IngredientEntity();
-    BeanUtils.copyProperties(ingredientDto, ingredientModel);
-    ingredientModel.setId(id);
-    ingredientModel.setMeasurement(optionalMeasurement.get());
+		var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
+		if (optionalMeasurement.isEmpty()) {
+			return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
+		}
 
-    return ResponseEntity.status(HttpStatus.OK).body(ingredientService.save(ingredientModel));
-  }
+		var ingredientModel = new IngredientEntity();
+		BeanUtils.copyProperties(ingredientDto, ingredientModel);
+		ingredientModel.setId(id);
+		ingredientModel.setMeasurement(optionalMeasurement.get());
+
+		return ResponseEntity.status(HttpStatus.OK).body(ingredientService.save(ingredientModel));
+	}
 }

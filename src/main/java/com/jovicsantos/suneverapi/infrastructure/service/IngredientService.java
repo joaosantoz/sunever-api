@@ -1,40 +1,37 @@
 package com.jovicsantos.suneverapi.infrastructure.service;
 
+import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.repository.IngredientRepository;
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 import java.util.UUID;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.repository.IngredientRepository;
-
 @Service
 public class IngredientService {
-  @Autowired
-  IngredientRepository ingredientRepository;
+	final IngredientRepository ingredientRepository;
 
-  public boolean existsByName(String name) {
-    return ingredientRepository.existsByName(name);
-  }
+	public IngredientService(IngredientRepository ingredientRepository) {
+		this.ingredientRepository = ingredientRepository;
+	}
 
-  public IngredientEntity save(IngredientEntity ingredient) {
-    return ingredientRepository.save(ingredient);
-  }
+	public boolean existsByName(String name) {
+		return ingredientRepository.existsByName(name);
+	}
 
-  public Iterable<IngredientEntity> findAll() {
-    return ingredientRepository.findAll();
-  }
+	public IngredientEntity save(IngredientEntity ingredient) {
+		return ingredientRepository.save(ingredient);
+	}
 
-  public Iterable<IngredientEntity> findAllById(Iterable<UUID> ids) {
-    return ingredientRepository.findAllById(ids);
-  }
+	public Iterable<IngredientEntity> findAll() {
+		return ingredientRepository.findAll();
+	}
 
-  public Optional<IngredientEntity> findById(UUID id) {
-    return ingredientRepository.findById(id);
-  }
+	public Optional<IngredientEntity> findById(UUID id) {
+		return ingredientRepository.findById(id);
+	}
 
-  public void deleteById(UUID id) {
-    ingredientRepository.deleteById(id);
-  }
+	public void deleteById(UUID id) {
+		ingredientRepository.deleteById(id);
+	}
 }

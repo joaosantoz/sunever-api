@@ -1,11 +1,10 @@
 package com.jovicsantos.suneverapi.infrastructure.repository;
 
-import java.util.UUID;
-
+import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import java.util.UUID;
 
 public interface IngredientRepository extends JpaRepository<IngredientEntity, UUID> {
-  boolean existsByName(String name);
+	boolean existsByName(String name);
 }
