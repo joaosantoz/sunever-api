@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.models;
+package com.jovicsantos.suneverapi.infrastructure.db.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -20,7 +20,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "RecipeIngredient")
-public class RecipeIngredient implements Serializable {
+public class RecipeIngredientEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -31,7 +31,7 @@ public class RecipeIngredient implements Serializable {
   @JsonIgnore
   @ManyToOne(cascade = CascadeType.ALL)
   @JoinColumn(name = "recipeId")
-  private Recipe recipe;
+  private RecipeEntity recipe;
 
   @Column(nullable = false, name = "ingredient_id")
   private UUID id;

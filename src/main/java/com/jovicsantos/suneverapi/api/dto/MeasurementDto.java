@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.dtos;
+package com.jovicsantos.suneverapi.api.dto;
 
 import org.hibernate.validator.constraints.Length;
 

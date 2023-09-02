@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.services;
+package com.jovicsantos.suneverapi.infrastructure.service;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -6,19 +6,19 @@ import java.util.UUID;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.jovicsantos.suneverapi.models.Measurement;
-import com.jovicsantos.suneverapi.repositories.MeasurementRepository;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.MeasurementEntity;
+import com.jovicsantos.suneverapi.infrastructure.repository.MeasurementRepository;
 
 @Service
 public class MeasurementService {
   @Autowired
   MeasurementRepository measurementRepository;
 
-  public Measurement save(Measurement measurement) {
+  public MeasurementEntity save(MeasurementEntity measurement) {
     return measurementRepository.save(measurement);
   }
 
-  public Iterable<Measurement> findAll() {
+  public Iterable<MeasurementEntity> findAll() {
     return measurementRepository.findAll();
   }
 
@@ -26,7 +26,7 @@ public class MeasurementService {
     return measurementRepository.existsByName(name);
   }
 
-  public Optional<Measurement> findById(UUID id) {
+  public Optional<MeasurementEntity> findById(UUID id) {
     return measurementRepository.findById(id);
   }
 

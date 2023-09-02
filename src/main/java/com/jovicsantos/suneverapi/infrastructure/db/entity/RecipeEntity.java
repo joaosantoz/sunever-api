@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.models;
+package com.jovicsantos.suneverapi.infrastructure.db.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -21,7 +21,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "recipe")
-public class Recipe implements Serializable {
+public class RecipeEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -37,7 +37,7 @@ public class Recipe implements Serializable {
   @Column(nullable = false)
   private Integer portions;
   @OneToMany(mappedBy = "recipe", cascade = CascadeType.ALL)
-  private List<RecipeIngredient> ingredientList;
+  private List<RecipeIngredientEntity> ingredientList;
   @Transient
   private BigDecimal recipeProductionCost;
   @Transient

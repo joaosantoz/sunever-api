@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.dtos;
+package com.jovicsantos.suneverapi.api.dto;
 
 import java.util.List;
 

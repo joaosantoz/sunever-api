@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.models;
+package com.jovicsantos.suneverapi.infrastructure.db.entity;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
@@ -17,7 +17,7 @@ import lombok.Data;
 @Entity
 @Data
 @Table(name = "ingredient")
-public class Ingredient implements Serializable {
+public class IngredientEntity implements Serializable {
   private static final long serialVersionUID = 1L;
 
   @Id
@@ -32,5 +32,5 @@ public class Ingredient implements Serializable {
 
   @ManyToOne
   @JoinColumn(name = "measurement_id")
-  private Measurement measurement;
+  private MeasurementEntity measurement;
 }

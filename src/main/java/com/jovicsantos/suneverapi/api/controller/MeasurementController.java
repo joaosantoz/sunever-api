@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.controllers;
+package com.jovicsantos.suneverapi.api.controller;
 
 import java.util.UUID;
 
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jovicsantos.suneverapi.dtos.MeasurementDto;
-import com.jovicsantos.suneverapi.models.Measurement;
-import com.jovicsantos.suneverapi.services.MeasurementService;
+import com.jovicsantos.suneverapi.api.dto.MeasurementDto;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.MeasurementEntity;
+import com.jovicsantos.suneverapi.infrastructure.service.MeasurementService;
 
 import jakarta.validation.Valid;
 
@@ -34,14 +34,14 @@ public class MeasurementController {
           .body("Conflict: This measurement already exists.");
     }
 
-    var measurementModel = new Measurement();
+    var measurementModel = new MeasurementEntity();
     BeanUtils.copyProperties(measurementDto, measurementModel);
 
     return ResponseEntity.status(HttpStatus.CREATED).body(measurementService.save(measurementModel));
   }
 
   @GetMapping
-  public ResponseEntity<Iterable<Measurement>> getAllMeasurements() {
+  public ResponseEntity<Iterable<MeasurementEntity>> getAllMeasurements() {
     return ResponseEntity.status(HttpStatus.OK).body(measurementService.findAll());
   }
 
@@ -78,7 +78,7 @@ public class MeasurementController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement not found.");
     }
 
-    var measurementModel = new Measurement();
+    var measurementModel = new MeasurementEntity();
     BeanUtils.copyProperties(measurementDto, measurementModel);
     measurementModel.setId(optionalMeasurement.get().getId());
 

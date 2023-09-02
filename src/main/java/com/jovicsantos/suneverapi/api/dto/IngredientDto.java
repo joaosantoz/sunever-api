@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.dtos;
+package com.jovicsantos.suneverapi.api.dto;
 
 import java.math.BigDecimal;
 import java.util.UUID;

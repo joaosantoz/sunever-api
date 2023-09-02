@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.controllers;
+package com.jovicsantos.suneverapi.api.controller;
 
 import java.util.UUID;
 
@@ -15,10 +15,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.jovicsantos.suneverapi.dtos.IngredientDto;
-import com.jovicsantos.suneverapi.models.Ingredient;
-import com.jovicsantos.suneverapi.services.IngredientService;
-import com.jovicsantos.suneverapi.services.MeasurementService;
+import com.jovicsantos.suneverapi.api.dto.IngredientDto;
+import com.jovicsantos.suneverapi.infrastructure.db.entity.IngredientEntity;
+import com.jovicsantos.suneverapi.infrastructure.service.IngredientService;
+import com.jovicsantos.suneverapi.infrastructure.service.MeasurementService;
 
 import jakarta.validation.Valid;
 import lombok.var;
@@ -38,7 +38,7 @@ public class IngredientController {
           .body("Conflict: This ingredient already exists.");
     }
 
-    var ingredientModel = new Ingredient();
+    var ingredientModel = new IngredientEntity();
     BeanUtils.copyProperties(ingredientDto, ingredientModel);
 
     var optionalMeasurement = measurementService.findById(ingredientDto.measurementId());
@@ -94,7 +94,7 @@ public class IngredientController {
       return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Measurement ID not found.");
     }
 
-    var ingredientModel = new Ingredient();
+    var ingredientModel = new IngredientEntity();
     BeanUtils.copyProperties(ingredientDto, ingredientModel);
     ingredientModel.setId(id);
     ingredientModel.setMeasurement(optionalMeasurement.get());
