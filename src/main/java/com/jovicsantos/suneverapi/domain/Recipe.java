@@ -1,4 +1,4 @@
-package com.jovicsantos.suneverapi.domain.model;
+package com.jovicsantos.suneverapi.domain;
 
 import java.math.BigDecimal;
 import java.util.List;
