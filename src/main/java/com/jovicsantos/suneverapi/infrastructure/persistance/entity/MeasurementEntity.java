@@ -1,10 +1,7 @@
 package com.jovicsantos.suneverapi.infrastructure.persistance.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.io.Serial;
 import java.io.Serializable;
@@ -15,6 +12,7 @@ import java.util.UUID;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@ToString
 @Table(name = "measurement")
 public class MeasurementEntity implements Serializable {
 	@Serial

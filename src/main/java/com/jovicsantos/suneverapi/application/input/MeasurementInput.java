@@ -1,4 +1,13 @@
 package com.jovicsantos.suneverapi.application.input;
 
-public record MeasurementInput(String name, String abbreviation) {
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+@AllArgsConstructor
+public class MeasurementInput {
+	private String name;
+	private String abbreviation;
 }

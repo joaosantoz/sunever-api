@@ -5,7 +5,6 @@ import com.jovicsantos.suneverapi.infrastructure.persistance.entity.RecipeEntity
 import com.jovicsantos.suneverapi.infrastructure.persistance.entity.RecipeIngredientEntity;
 import com.jovicsantos.suneverapi.infrastructure.repository.RecipeIngredientRepository;
 import com.jovicsantos.suneverapi.infrastructure.repository.RecipeRepository;
-import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
@@ -14,7 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 public class RecipeInteractor {
 	private final RecipeRepository recipeRepository;
 

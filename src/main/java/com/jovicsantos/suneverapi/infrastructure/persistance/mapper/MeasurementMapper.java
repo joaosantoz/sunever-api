@@ -5,7 +5,7 @@ import com.jovicsantos.suneverapi.infrastructure.persistance.entity.MeasurementE
 
 public class MeasurementMapper {
 	public MeasurementEntity toEntity(Measurement measurement) {
-		return new MeasurementEntity(measurement.id(), measurement.name(), measurement.abbreviation());
+		return new MeasurementEntity(measurement.getId(), measurement.getName(), measurement.getAbbreviation());
 	}
 
 	public Measurement toDomain(MeasurementEntity measurementEntity) {

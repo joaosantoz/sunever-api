@@ -1,9 +1,16 @@
 package com.jovicsantos.suneverapi.domain;
 
+import lombok.*;
+
 import java.util.UUID;
 
-public record Measurement(UUID id, String name, String abbreviation) {
-	public Measurement(String name, String abbreviation) {
-		this(null, name, abbreviation);
-	}
+@Getter
+@Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
+public class Measurement {
+	private UUID id;
+	private String name;
+	private String abbreviation;
 }

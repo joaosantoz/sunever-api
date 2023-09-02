@@ -6,4 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import java.util.UUID;
 
 public interface MeasurementRepository extends JpaRepository<MeasurementEntity, UUID> {
+	boolean existsByName(String name);
+
+	boolean existsByAbbreviation(String abbreviation);
 }

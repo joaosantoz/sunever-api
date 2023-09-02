@@ -1,6 +1,6 @@
 package com.jovicsantos.suneverapi.main;
 
-import com.jovicsantos.suneverapi.api.dto.MeasurementDtoMapper;
+import com.jovicsantos.suneverapi.api.dto.MeasurementDto;
 import com.jovicsantos.suneverapi.application.gateway.MeasurementGateway;
 import com.jovicsantos.suneverapi.application.interactor.MeasurementInteractor;
 import com.jovicsantos.suneverapi.infrastructure.gateway.MeasurementRepositoryGateway;
@@ -27,7 +27,7 @@ public class MeasurementConfig {
 	}
 
 	@Bean
-	MeasurementDtoMapper measurementDtoMapper() {
-		return new MeasurementDtoMapper();
+	MeasurementDto measurementDtoMapper() {
+		return new MeasurementDto();
 	}
 }

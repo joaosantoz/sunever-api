@@ -11,9 +11,13 @@ public interface MeasurementGateway {
 
 	Optional<Measurement> findMeasurement(UUID id);
 
-	Measurement updateMeasurement(Measurement measurement);
-
 	List<Measurement> findAllMeasurements();
 
+	Measurement updateMeasurement(UUID id, Measurement measurement);
+
 	void deleteMeasurement(UUID id);
+
+	boolean existsByName(String name);
+
+	boolean existsByAbbreviation(String abbreviation);
 }

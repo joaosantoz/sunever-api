@@ -24,23 +24,15 @@ public class MeasurementRepositoryGateway implements MeasurementGateway {
 	public Measurement createMeasurement(Measurement measurement) {
 		MeasurementEntity measurementEntity = measurementMapper.toEntity(measurement);
 		MeasurementEntity measurementSaved = measurementRepository.save(measurementEntity);
+
 		return measurementMapper.toDomain(measurementSaved);
 	}
 
 	@Override
 	public Optional<Measurement> findMeasurement(UUID id) {
-		MeasurementEntity measurementEntity = measurementRepository.findById(id).orElse(null);
-		if (measurementEntity == null) {
-			return Optional.empty();
-		}
-		return Optional.of(measurementMapper.toDomain(measurementEntity));
-	}
+		Optional<MeasurementEntity> measurementEntity = measurementRepository.findById(id);
 
-	@Override
-	public Measurement updateMeasurement(Measurement measurement) {
-		MeasurementEntity measurementEntity = measurementMapper.toEntity(measurement);
-		MeasurementEntity measurementSaved = measurementRepository.save(measurementEntity);
-		return measurementMapper.toDomain(measurementSaved);
+		return measurementEntity.map(measurementMapper::toDomain);
 	}
 
 	@Override
@@ -53,7 +45,25 @@ public class MeasurementRepositoryGateway implements MeasurementGateway {
 	}
 
 	@Override
+	public Measurement updateMeasurement(UUID id, Measurement measurement) {
+		MeasurementEntity measurementEntity = measurementMapper.toEntity(measurement);
+		MeasurementEntity measurementUpdated = measurementRepository.save(measurementEntity);
+
+		return measurementMapper.toDomain(measurementUpdated);
+	}
+
+	@Override
 	public void deleteMeasurement(UUID id) {
 		measurementRepository.deleteById(id);
+	}
+
+	@Override
+	public boolean existsByName(String name) {
+		return measurementRepository.existsByName(name);
+	}
+
+	@Override
+	public boolean existsByAbbreviation(String abbreviation) {
+		return measurementRepository.existsByAbbreviation(abbreviation);
 	}
 }

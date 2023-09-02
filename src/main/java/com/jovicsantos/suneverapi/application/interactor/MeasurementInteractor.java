@@ -3,6 +3,7 @@ package com.jovicsantos.suneverapi.application.interactor;
 import com.jovicsantos.suneverapi.application.gateway.MeasurementGateway;
 import com.jovicsantos.suneverapi.application.usecase.MeasurementUsecase;
 import com.jovicsantos.suneverapi.domain.Measurement;
+import org.springframework.beans.BeanUtils;
 
 import java.util.List;
 import java.util.Optional;
@@ -15,23 +16,38 @@ public class MeasurementInteractor implements MeasurementUsecase {
 		this.measurementGateway = measurementGateway;
 	}
 
-	public Measurement create(Measurement measurement) {
+	public Measurement save(Measurement measurement) {
+		if (measurementGateway.existsByName(measurement.getName())) {
+			throw new RuntimeException("Measurement name already exists.");
+		}
+
+		if (measurementGateway.existsByAbbreviation(measurement.getAbbreviation())) {
+			throw new RuntimeException("Measurement abbreviation already exists.");
+		}
+
 		return measurementGateway.createMeasurement(measurement);
 	}
 
-	public Optional<Measurement> find(UUID id) {
-		return measurementGateway.findMeasurement(id);
-	}
+	public Measurement find(UUID id) {
+		Optional<Measurement> optionalMeasurement = measurementGateway.findMeasurement(id);
 
-	public Measurement update(Measurement measurement) {
-		return measurementGateway.updateMeasurement(measurement);
+		return optionalMeasurement.orElseThrow(() -> new RuntimeException("Measurement not found."));
 	}
 
 	public List<Measurement> findAll() {
 		return measurementGateway.findAllMeasurements();
 	}
 
+	public Measurement update(UUID id, Measurement measurement) {
+		Measurement measurementToBeUpdated = find(id);
+		BeanUtils.copyProperties(measurement, measurementToBeUpdated);
+
+		return measurementGateway.updateMeasurement(id, measurementToBeUpdated);
+	}
+
 	public void delete(UUID id) {
-		measurementGateway.deleteMeasurement(id);
+		Measurement measurementToBeDeleted = find(id);
+
+		measurementGateway.deleteMeasurement(measurementToBeDeleted.getId());
 	}
 }

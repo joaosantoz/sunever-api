@@ -2,12 +2,10 @@ package com.jovicsantos.suneverapi.application.interactor;
 
 import com.jovicsantos.suneverapi.infrastructure.persistance.entity.IngredientEntity;
 import com.jovicsantos.suneverapi.infrastructure.repository.IngredientRepository;
-import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 import java.util.UUID;
 
-@Service
 public class IngredientInteractor {
 	private final IngredientRepository ingredientRepository;
 
