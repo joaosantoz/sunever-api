@@ -1,6 +1,9 @@
-package com.jovicsantos.suneverapi.domain;
+package com.jovicsantos.suneverapi.application.output;
 
-import lombok.*;
+import com.jovicsantos.suneverapi.domain.Measurement;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.math.BigDecimal;
 import java.util.UUID;
@@ -8,9 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @AllArgsConstructor
-@NoArgsConstructor
-@ToString
-public final class Ingredient {
+public class IngredientOutput {
 	private UUID id;
 	private String name;
 	private BigDecimal price;

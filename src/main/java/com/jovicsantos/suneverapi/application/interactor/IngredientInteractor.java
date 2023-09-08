@@ -1,35 +1,49 @@
 package com.jovicsantos.suneverapi.application.interactor;
 
-import com.jovicsantos.suneverapi.infrastructure.persistance.entity.IngredientEntity;
-import com.jovicsantos.suneverapi.infrastructure.repository.IngredientRepository;
+import com.jovicsantos.suneverapi.application.gateway.IngredientGateway;
+import com.jovicsantos.suneverapi.application.usecase.IngredientUsecase;
+import com.jovicsantos.suneverapi.domain.Ingredient;
+import org.springframework.beans.BeanUtils;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class IngredientInteractor {
-	private final IngredientRepository ingredientRepository;
+public class IngredientInteractor implements IngredientUsecase {
+	private final IngredientGateway ingredientGateway;
 
-	public IngredientInteractor(IngredientRepository ingredientRepository) {
-		this.ingredientRepository = ingredientRepository;
+	public IngredientInteractor(IngredientGateway ingredientGateway) {
+		this.ingredientGateway = ingredientGateway;
 	}
 
-	public boolean existsByName(String name) {
-		return ingredientRepository.existsByName(name);
+	public Ingredient save(Ingredient ingredient) {
+		if (ingredientGateway.existsByName(ingredient.getName())) {
+			throw new RuntimeException("Ingredient name already exists.");
+		}
+
+		return ingredientGateway.createIngredient(ingredient);
 	}
 
-	public IngredientEntity save(IngredientEntity ingredient) {
-		return ingredientRepository.save(ingredient);
+	public Ingredient find(UUID id) {
+		Optional<Ingredient> optionalIngredient = ingredientGateway.findIngredient(id);
+
+		return optionalIngredient.orElseThrow(() -> new RuntimeException("Ingredient not found."));
 	}
 
-	public Iterable<IngredientEntity> findAll() {
-		return ingredientRepository.findAll();
+	public List<Ingredient> findAll() {
+		return ingredientGateway.findAllIngredients();
 	}
 
-	public Optional<IngredientEntity> findById(UUID id) {
-		return ingredientRepository.findById(id);
+	public Ingredient update(UUID id, Ingredient ingredient) {
+		Ingredient ingredientToBeUpdated = find(id);
+		BeanUtils.copyProperties(ingredient, ingredientToBeUpdated);
+
+		return ingredientGateway.updateIngredient(id, ingredientToBeUpdated);
 	}
 
-	public void deleteById(UUID id) {
-		ingredientRepository.deleteById(id);
+	public void delete(UUID id) {
+		Ingredient ingredientToBeDeleted = find(id);
+
+		ingredientGateway.deleteIngredient(ingredientToBeDeleted.getId());
 	}
 }

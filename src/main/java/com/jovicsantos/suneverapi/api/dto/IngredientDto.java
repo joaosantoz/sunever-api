@@ -1,11 +1,27 @@
 package com.jovicsantos.suneverapi.api.dto;
 
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
+import com.jovicsantos.suneverapi.application.input.IngredientInput;
+import com.jovicsantos.suneverapi.application.interactor.MeasurementInteractor;
+import com.jovicsantos.suneverapi.application.output.IngredientOutput;
+import com.jovicsantos.suneverapi.domain.Ingredient;
+import com.jovicsantos.suneverapi.domain.Measurement;
 
-import java.math.BigDecimal;
-import java.util.UUID;
+public class IngredientDto {
+	private MeasurementInteractor measurementInteractor;
 
-public record IngredientDto(@NotBlank String name, @NotNull BigDecimal price, @NotNull BigDecimal quantityPerMeasure,
-														@NotNull UUID measurementId) {
+	public IngredientDto(MeasurementInteractor measurementInteractor) {
+		this.measurementInteractor = measurementInteractor;
+	}
+
+	public Ingredient toDomain(IngredientInput ingredientInput) {
+		Measurement measurement = measurementInteractor.find(ingredientInput.getMeasurementId());
+
+		return new Ingredient(null, ingredientInput.getName(), ingredientInput.getPrice(), ingredientInput.getQuantityPerMeasure(), measurement);
+	}
+
+	public IngredientOutput toOutput(Ingredient ingredient) {
+		Measurement measurement = measurementInteractor.find(ingredient.getId());
+
+		return new IngredientOutput(ingredient.getId(), ingredient.getName(), ingredient.getPrice(), ingredient.getQuantityPerMeasure(), measurement);
+	}
 }

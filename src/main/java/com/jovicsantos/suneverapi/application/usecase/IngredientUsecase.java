@@ -2,16 +2,17 @@ package com.jovicsantos.suneverapi.application.usecase;
 
 import com.jovicsantos.suneverapi.domain.Ingredient;
 
+import java.util.List;
 import java.util.UUID;
 
 public interface IngredientUsecase {
-	Ingredient createIngredient(Ingredient ingredient);
+	Ingredient save(Ingredient ingredient);
 
-	Ingredient findIngredientById(UUID id);
+	Ingredient find(UUID id);
 
-	Ingredient updateIngredient(Ingredient ingredient);
+	List<Ingredient> findAll();
 
-	Iterable<Ingredient> listAllIngredients();
+	Ingredient update(UUID id, Ingredient ingredient);
 
-	void deleteIngredientById(UUID id);
+	void delete(UUID id);
 }
